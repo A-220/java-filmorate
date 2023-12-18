@@ -31,9 +31,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Film getFilmById(Long id) {
-        return filmRepository.getFilmById(id)
-                .orElseThrow(()
-                        -> new NotFoundException(String.format(FILM_NOT_FOUND_WARN, id)));
+        return filmRepository.getFilmById(id).orElseThrow(() -> new NotFoundException(String.format(FILM_NOT_FOUND_WARN, id)));
     }
 
     @Override
@@ -45,9 +43,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Film updateFilm(Film film) {
-        var resFilm = filmRepository.updateFilm(film)
-                .orElseThrow(() -> new NotFoundException(String.format(FILM_NOT_FOUND_WARN,
-                        film.getId())));
+        var resFilm = filmRepository.updateFilm(film).orElseThrow(() -> new NotFoundException(String.format(FILM_NOT_FOUND_WARN, film.getId())));
         log.info(SUCCESSFUL_UPDATE_FILM, film.getId());
         return resFilm;
     }
@@ -65,8 +61,7 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public Film setLike(Long id, Long userId) {
         var film = getFilmById(id);
-        if (userId <= 0)
-            return film;
+        if (userId <= 0) throw new NotFoundException(UserServiceImpl.NOT_FOUND_USER);
         updateLikes(film, userId);
         log.info(SUCCESSFUL_ADD_LIKE, id, userId);
         return film;
@@ -75,8 +70,7 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public Film removeLike(Long id, Long userId) {
         var film = getFilmById(id);
-        if (userId <= 0)
-            return film;
+        if (userId <= 0) throw new NotFoundException(UserServiceImpl.NOT_FOUND_USER);
         removeLikes(film, userId);
         log.info(SUCCESSFUL_REMOVE_LIKE, id, userId);
         return null;
@@ -84,10 +78,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public List<Film> getTopFilms(Integer count) {
-        return getAllFilms().stream()
-                .sorted(Comparator.comparingInt((Film film) -> film.getLikes().size()).reversed())
-                .limit(count)
-                .collect(toList());
+        return getAllFilms().stream().sorted(Comparator.comparingInt((Film film) -> film.getLikes().size()).reversed()).limit(count).collect(toList());
     }
 
     private void updateLikes(Film film, Long userId) {

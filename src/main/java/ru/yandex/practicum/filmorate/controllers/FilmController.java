@@ -21,10 +21,11 @@ public class FilmController {
         this.filmService = filmService;
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public Film getFilmById(@PathVariable(value = "id") Long id) {
         return filmService.getFilmById(id);
     }
+
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film, BindingResult bindingResult) {
