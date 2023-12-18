@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.utils.IncrementUtil;
 
@@ -16,16 +15,16 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public Optional<User> getUserById(Long id) {
-        if(mapOfUsers.containsKey(id)) {
+        if (mapOfUsers.containsKey(id)) {
             return Optional.of(mapOfUsers.get(id));
         }
         return Optional.empty();
     }
 
     @Override
-    public User addUser (User user) {
+    public User addUser(User user) {
         user.setId(IncrementUtil.getIncrementUserId());
-        if(user.getFriends() == null) {
+        if (user.getFriends() == null) {
             user.setFriends(new HashSet<>());
         }
         mapOfUsers.put(user.getId(), user);
@@ -33,9 +32,9 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public Optional<User> updateUser (User user) {
-        if(mapOfUsers.containsKey(user.getId())) {
-            if(user.getFriends() == null) {
+    public Optional<User> updateUser(User user) {
+        if (mapOfUsers.containsKey(user.getId())) {
+            if (user.getFriends() == null) {
                 user.setFriends(new HashSet<>());
             }
             mapOfUsers.put(user.getId(), user);
@@ -46,7 +45,7 @@ public class InMemoryUserStorage implements UserStorage {
 
 
     @Override
-    public List<User> getAllUsers () {
+    public List<User> getAllUsers() {
         return new ArrayList<>(mapOfUsers.values());
     }
 
