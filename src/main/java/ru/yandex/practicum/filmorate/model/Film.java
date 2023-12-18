@@ -6,6 +6,9 @@ import ru.yandex.practicum.filmorate.annotations.ReleaseDate;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 @Data
@@ -24,4 +27,5 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Duration cannot be zero or less")
     private Integer duration;
+    private Set<Long> likes;
 }
