@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.entity.User;
 import ru.yandex.practicum.filmorate.utils.IncrementUtil;
 
 import java.util.*;

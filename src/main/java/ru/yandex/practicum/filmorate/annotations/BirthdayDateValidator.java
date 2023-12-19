@@ -1,6 +1,5 @@
-package ru.yandex.practicum.filmorate.validators;
+package ru.yandex.practicum.filmorate.annotations;
 
-import ru.yandex.practicum.filmorate.annotations.BirthdayDate;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

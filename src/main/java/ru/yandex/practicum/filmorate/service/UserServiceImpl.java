@@ -1,10 +1,11 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.entity.User;
 import ru.yandex.practicum.filmorate.repository.UserStorage;
 
 import java.util.List;
@@ -12,8 +13,10 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
+    @Autowired
     private final UserStorage userRepository;
     public static final String NOT_FOUND_USER = "User with id %s doesn't exist.";
     public static final String SUCCESSFUL_ADD_USER = "Successful add user with id: {}";
@@ -26,12 +29,6 @@ public class UserServiceImpl implements UserService {
     public static final String EMPTY_LIST_OF_FRIENDS = "The list of friends is empty";
     public static final String EMPTY_LIST_OF_COMMON_FRIENDS = "The list of common friends is empty";
     public static final String USER_CANNOT_BE_FRIEND_WITH_SELF = "User cannot be friend with them self";
-
-    @Autowired
-    public UserServiceImpl(UserStorage userRepository) {
-        this.userRepository = userRepository;
-    }
-
 
     @Override
     public User getUserById(Long id) {
@@ -102,7 +99,7 @@ public class UserServiceImpl implements UserService {
         }
 
         removeUserFriendList(user, friendId);
-        removeUserFriendList(user, friendId);
+        removeUserFriendList(friend, id);
 
 
         log.info(SUCCESSFUL_DELETE_FRIEND, friendId, id);

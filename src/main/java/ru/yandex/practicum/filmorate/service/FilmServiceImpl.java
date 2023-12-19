@@ -1,11 +1,12 @@
 package ru.yandex.practicum.filmorate.service;
 
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.entity.Film;
 import ru.yandex.practicum.filmorate.repository.FilmStorage;
 
 import java.util.Comparator;
@@ -15,7 +16,9 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class FilmServiceImpl implements FilmService {
+    @Autowired
     private final FilmStorage filmRepository;
     public static final String FILM_NOT_FOUND_WARN = "Film with id: %s doesn't exist.";
     public static final String SUCCESSFUL_ADD_FILM = "Successful add film with id: {}";
@@ -23,11 +26,6 @@ public class FilmServiceImpl implements FilmService {
     public static final String SUCCESSFUL_ADD_LIKE = "Successful add like for film with id: {}, of user with id: {}";
     public static final String SUCCESSFUL_REMOVE_LIKE = "Successful remove like for film with id: {}, of user with id: {}";
     public static final String EMPTY_LIST_WARN = "The list of films is empty";
-
-    @Autowired
-    public FilmServiceImpl(FilmStorage filmRepository) {
-        this.filmRepository = filmRepository;
-    }
 
     @Override
     public Film getFilmById(Long id) {
