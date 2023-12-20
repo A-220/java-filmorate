@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.entity;
 
 import lombok.Builder;
 import lombok.Data;
@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.annotations.ReleaseDate;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.Set;
 
 
 @Data
@@ -24,4 +25,5 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Duration cannot be zero or less")
     private Integer duration;
+    private Set<Long> likes;
 }

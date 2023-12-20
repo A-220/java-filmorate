@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.entity;
 
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +9,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @Builder(toBuilder = true)
@@ -27,4 +28,5 @@ public class User {
     @NotNull(message = "Birthday cannot be null")
     @BirthdayDate
     private LocalDate birthday;
+    private Set<Long> friends;
 }

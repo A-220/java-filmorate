@@ -1,63 +1,73 @@
 package ru.yandex.practicum.filmorate.controllers;
 
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.entity.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.utils.ErrorsHandlerUtil;
 
 import javax.validation.Valid;
 import java.util.*;
 
 @RestController
-@Slf4j
+@RequestMapping("/users")
 public class UserController {
-    private final Map<Long, User> mapOfUsers = new HashMap<>();
-    public static final String NOT_FOUND_USER = "User with id %s doesn't exist.";
-    public static final String SUCCESSFUL_ADD_USER = "Successful add user with id: {}";
-    public static final String SUCCESSFUL_UPDATE_USER = "Successful update user with id: {}";
-    private long incrementId = 0;
 
-    @PostMapping("/users")
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping("{id}")
+    public User getUserById(@PathVariable(value = "id") Long id) {
+        return userService.getUserById(id);
+    }
+
+
+    @PutMapping("{id}/friends/{friendId}")
+    public User addNewFriend(@PathVariable(value = "id") Long id,
+                             @PathVariable(value = "friendId") Long friendId) {
+        return userService.addNewFriend(id, friendId);
+    }
+
+    @DeleteMapping("{id}/friends/{friendId}")
+    public User deleteFriend(@PathVariable(value = "id") Long id,
+                             @PathVariable(value = "friendId") Long friendId) {
+        return userService.deleteFriend(id, friendId);
+    }
+
+    @GetMapping("{id}/friends")
+    public List<User> getAllFriends(@PathVariable(value = "id") Long id) {
+        return userService.getAllFriends(id);
+    }
+
+    @GetMapping("{id}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable(value = "id") Long id,
+                                       @PathVariable(value = "otherId") Long otherId) {
+        return userService.getCommonFriends(id, otherId);
+    }
+
+
+    @PostMapping
     public User addUser(@Valid @RequestBody User user, BindingResult bindingResult) {
         ErrorsHandlerUtil.throwValidationExceptionIfErrorsExist(bindingResult);
-        ensureNameIsSet(user);
-        user.setId(getIncrementId());
-        mapOfUsers.put(user.getId(), user);
-        log.info(SUCCESSFUL_ADD_USER, user.getId());
-        return user;
+        return userService.addUser(user);
     }
 
-    @PutMapping("/users")
+
+    @PutMapping
     public User updateUser(@Valid @RequestBody User user, BindingResult bindingResult) {
         ErrorsHandlerUtil.throwValidationExceptionIfErrorsExist(bindingResult);
-        ensureNameIsSet(user);
-        if (mapOfUsers.containsKey(user.getId())) {
-            mapOfUsers.put(user.getId(), user);
-            log.info(SUCCESSFUL_UPDATE_USER, user.getId());
-            return user;
-        } else {
-            throw new NotFoundException(String.format(NOT_FOUND_USER, user.getId()));
-        }
+        return userService.updateUser(user);
     }
 
-    @GetMapping("/users")
-    public List<User> getListOfUsers() {
-        List<User> userList = new ArrayList<>(mapOfUsers.values());
-        if (userList.isEmpty()) {
-            log.warn("List of users is empty");
-        }
-        return userList;
+    @GetMapping
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
     }
 
-    private void ensureNameIsSet(User user) {
-        if (user.getName() == null || user.getName().isEmpty()) {
-            user.setName(user.getLogin());
-        }
-    }
 
-    private long getIncrementId() {
-        return ++incrementId;
-    }
 }
