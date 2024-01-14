@@ -1,8 +1,8 @@
-package ru.yandex.practicum.filmorate.entity;
+package ru.yandex.practicum.filmorate.storage.entity;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.yandex.practicum.filmorate.annotations.ReleaseDate;
+import ru.yandex.practicum.filmorate.api.errors.annotations.ReleaseDate;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;

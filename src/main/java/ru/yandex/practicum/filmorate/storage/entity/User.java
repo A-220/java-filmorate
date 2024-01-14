@@ -1,9 +1,9 @@
-package ru.yandex.practicum.filmorate.entity;
+package ru.yandex.practicum.filmorate.storage.entity;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.yandex.practicum.filmorate.annotations.BirthdayDate;
-import ru.yandex.practicum.filmorate.annotations.NoWhiteSpace;
+import ru.yandex.practicum.filmorate.api.errors.annotations.BirthdayDate;
+import ru.yandex.practicum.filmorate.api.errors.annotations.NoWhiteSpace;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;

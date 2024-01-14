@@ -4,9 +4,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.entity.Film;
-import ru.yandex.practicum.filmorate.repository.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.service.FilmServiceImpl;
+import ru.yandex.practicum.filmorate.api.controllers.FilmController;
+import ru.yandex.practicum.filmorate.storage.entity.Film;
+import ru.yandex.practicum.filmorate.storage.repository.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.api.service.FilmServiceImpl;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;

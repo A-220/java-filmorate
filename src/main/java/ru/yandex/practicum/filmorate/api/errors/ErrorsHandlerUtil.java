@@ -1,8 +1,8 @@
-package ru.yandex.practicum.filmorate.utils;
+package ru.yandex.practicum.filmorate.api.errors;
 
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.validation.BindingResult;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.api.errors.exception.ValidationException;
 
 import java.util.List;
 import java.util.stream.Collectors;

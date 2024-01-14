@@ -1,6 +1,6 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.api.service;
 
-import ru.yandex.practicum.filmorate.entity.User;
+import ru.yandex.practicum.filmorate.storage.entity.User;
 
 import java.util.List;
 

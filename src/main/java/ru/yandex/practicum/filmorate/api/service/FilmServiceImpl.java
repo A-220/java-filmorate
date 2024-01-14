@@ -1,13 +1,13 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.api.service;
 
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.entity.Film;
-import ru.yandex.practicum.filmorate.repository.FilmStorage;
+import ru.yandex.practicum.filmorate.api.errors.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.storage.entity.Film;
+import ru.yandex.practicum.filmorate.storage.repository.FilmStorage;
 
 import java.util.Comparator;
 import java.util.List;

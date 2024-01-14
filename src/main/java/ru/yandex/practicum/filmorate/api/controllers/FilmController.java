@@ -1,11 +1,11 @@
-package ru.yandex.practicum.filmorate.controllers;
+package ru.yandex.practicum.filmorate.api.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.entity.Film;
-import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.utils.ErrorsHandlerUtil;
+import ru.yandex.practicum.filmorate.storage.entity.Film;
+import ru.yandex.practicum.filmorate.api.service.FilmService;
+import ru.yandex.practicum.filmorate.api.errors.ErrorsHandlerUtil;
 
 import javax.validation.Valid;
 import java.util.List;
