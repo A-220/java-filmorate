@@ -76,7 +76,9 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public List<Film> getTopFilms(Integer count) {
-        return getAllFilms().stream().sorted(Comparator.comparingInt((Film film) -> film.getLikes().size()).reversed()).limit(count).collect(toList());
+        return getAllFilms().stream()
+                .sorted(Comparator.comparingInt((Film film) -> film.getLikes()
+                        .size()).reversed()).limit(count).collect(toList());
     }
 
     private void updateLikes(Film film, Long userId) {

@@ -43,7 +43,6 @@ public class InMemoryUserStorage implements UserStorage {
         return Optional.empty();
     }
 
-
     @Override
     public List<User> getAllUsers() {
         return new ArrayList<>(mapOfUsers.values());
