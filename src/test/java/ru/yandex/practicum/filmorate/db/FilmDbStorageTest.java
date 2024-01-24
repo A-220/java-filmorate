@@ -21,19 +21,25 @@ class FilmDbStorageTest {
 
     @Test
     public void testFindFilmById() {
+        var mpa = new Film.Mpa();
+        mpa.setId(1);
         var film = Film.builder()
                 .name("test name")
                 .description("test desc")
                 .releaseDate(LocalDate.of(2000, 2, 22))
                 .duration(22)
+                .mpa(mpa)
+                .likes(new HashSet<>())
+                .genres(new HashSet<>())
                 .build();
 
         var filmStorage = new FilmStorageImpl(jdbcTemplate);
-        filmStorage.addFilm(film);
-        film.setLikes(new HashSet<>());
-        film.setLikeToFilm(0L);
 
-        film.setGenres(new HashSet<>());
+        filmStorage.addFilm(film);
+        film.setLikeToFilm(0L);
+        film.getMpa().setName("G");
+
+
         var savedFilm = filmStorage.getFilmById(1L);
 
         assertThat(savedFilm)

@@ -214,12 +214,10 @@ public class FilmStorageImpl implements FilmStorage {
         }
 
         String insertLikesSql = "insert into likes(film_id, user_id) values (?, ?)";
-        if (film.getLikes() != null) {
-            if (!film.getLikes().isEmpty()) {
-                for (Long userWhoLikeId : film.getLikes()) {
-                    if (userWhoLikeId > 0) {
-                        jdbcTemplate.update(insertLikesSql, film.getId(), userWhoLikeId);
-                    }
+        if (!film.getLikes().isEmpty()) {
+            for (Long userWhoLikeId : film.getLikes()) {
+                if (userWhoLikeId > 0) {
+                    jdbcTemplate.update(insertLikesSql, film.getId(), userWhoLikeId);
                 }
             }
         } else {
@@ -234,19 +232,16 @@ public class FilmStorageImpl implements FilmStorage {
         }
 
         String insertGenresSql = "insert into film_genre(film_id, genre_id) values (?, ?)";
-        if (film.getGenres() != null) {
-            for (Film.Genre genre : film.getGenres()) {
-                jdbcTemplate.update(insertGenresSql, film.getId(), genre.getId());
-            }
+        for (Film.Genre genre : film.getGenres()) {
+            jdbcTemplate.update(insertGenresSql, film.getId(), genre.getId());
+        }
 
-            if (selectFilmGenre().get(film.getId()) != null) {
-                film.setGenres(selectFilmGenre().get(film.getId()));
-            }
+        if (selectFilmGenre().get(film.getId()) != null) {
+            film.setGenres(selectFilmGenre().get(film.getId()));
         }
     }
 
     private void insertFilmMpa(Film film, boolean update) {
-        if (film.getMpa() != null) {
             if (update) {
                 String deleteMpaSql = "delete from mpa where film_id=?";
                 jdbcTemplate.update(deleteMpaSql, film.getId());
@@ -255,7 +250,6 @@ public class FilmStorageImpl implements FilmStorage {
             String insertMpaSql = "insert into mpa(film_id, mpa_id) values (?, ?)";
 
             jdbcTemplate.update(insertMpaSql, film.getId(), film.getMpa().getId());
-        }
     }
 
     private Map<Long, Set<Long>> selectFilmLikes() {
