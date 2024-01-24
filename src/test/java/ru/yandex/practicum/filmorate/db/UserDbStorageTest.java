@@ -1,20 +1,21 @@
 package ru.yandex.practicum.filmorate.db;
 
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.storage.entity.User;
 import ru.yandex.practicum.filmorate.storage.repository.db.UserStorageImpl;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @JdbcTest
-@RequiredArgsConstructor
 class UserDbStorageTest {
-    private final JdbcTemplate jdbcTemplate;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Test
     public void testFindUserById() {
@@ -32,6 +33,6 @@ class UserDbStorageTest {
         assertThat(savedUser)
                 .isNotNull()
                 .usingRecursiveComparison()
-                .isEqualTo(user);
+                .isEqualTo(Optional.of(user));
     }
 }
