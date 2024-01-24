@@ -21,6 +21,36 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
+    public List<Film> getTopFilms(Integer count) {
+        return null;
+    }
+
+    @Override
+    public List<Film.Mpa> mpa() {
+        return null;
+    }
+
+    @Override
+    public Film.Mpa mpaById(Long id) {
+        return null;
+    }
+
+    @Override
+    public List<Film.Genre> genre() {
+        return null;
+    }
+
+    @Override
+    public Film.Genre genreById(Long id) {
+        return null;
+    }
+
+    @Override
+    public void delete(Long id) {
+
+    }
+
+    @Override
     public Film addFilm(Film film) {
         if (film.getLikes() == null) {
             film.setLikes(new HashSet<>());

@@ -9,6 +9,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,7 +37,16 @@ public class User {
     @BirthdayDate
     private LocalDate birthday;
 
-    private Map<Integer, String> friendStatus;
+    private final Map<Long, String> friendStatus = new HashMap<>();
 
-    private Set<Long> friends;
+    private final Set<Long> friends = new HashSet<>();
+
+    public void deleteFriend(Long id) {
+        friendStatus.remove(id);
+    }
+
+    public void setFriendStatus(Long id, String status) {
+        friendStatus.put(id, status);
+    }
+
 }

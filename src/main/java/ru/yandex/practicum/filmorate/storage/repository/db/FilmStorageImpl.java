@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.repository;
+package ru.yandex.practicum.filmorate.storage.repository.db;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -6,7 +6,10 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.api.errors.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.api.service.FilmServiceImpl;
 import ru.yandex.practicum.filmorate.storage.entity.Film;
+import ru.yandex.practicum.filmorate.storage.repository.FilmStorage;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -24,7 +27,7 @@ public class FilmStorageImpl implements FilmStorage {
 
     private void checkFilmExist(Long id) {
         if (!(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM film WHERE film_id = ?", Integer.class, id) > 0)) {
-            throw new IllegalArgumentException("Не верный id");
+            throw new NotFoundException(FilmServiceImpl.FILM_NOT_FOUND_WARN);
         }
     }
 
@@ -44,7 +47,7 @@ public class FilmStorageImpl implements FilmStorage {
         if (!(jdbcTemplate.queryForObject("SELECT COUNT(*)" +
                 " FROM motion_picture_association " +
                 "WHERE mpa_id = ?", Integer.class, id) > 0)) {
-            throw new IllegalArgumentException("Не верный id");
+            throw new NotFoundException(FilmServiceImpl.FILM_NOT_FOUND_WARN);
         }
         Film.Mpa mw = new Film.Mpa();
         SqlRowSet mpaFromRow = jdbcTemplate.queryForRowSet(
@@ -68,11 +71,12 @@ public class FilmStorageImpl implements FilmStorage {
         return genres;
     }
 
-    public Film.Genre genreById(int id) {
+    @Override
+    public Film.Genre genreById(Long id) {
         if (!(jdbcTemplate.queryForObject("SELECT COUNT(*)" +
                 " FROM film_genre " +
                 "WHERE genre_id = ?", Integer.class, id) > 0)) {
-            throw new IllegalArgumentException("Не верный id");
+            throw new NotFoundException(FilmServiceImpl.FILM_NOT_FOUND_WARN);
         }
         Film.Genre gw = new Film.Genre();
         SqlRowSet genreFromRow = jdbcTemplate.queryForRowSet("select * from genre where genre_id = ?", id);
@@ -266,16 +270,16 @@ public class FilmStorageImpl implements FilmStorage {
         return filmsLikes;
     }
 
-    private HashMap<Integer, Set<Film.Genre>> selectFilmGenre() {
+    private Map<Long, Set<Film.Genre>> selectFilmGenre() {
         SqlRowSet filmGenreRows = jdbcTemplate.queryForRowSet(
                 "select * from film_genre" +
                         " LEFT OUTER JOIN genre" +
                         " ON film_genre.genre_id = genre.genre_id");
 
-        HashMap<Integer, Set<Film.Genre>> filmsGenres = new HashMap<>();
+        Map<Long, Set<Film.Genre>> filmsGenres = new HashMap<>();
 
         while (filmGenreRows.next()) {
-            int filmId = filmGenreRows.getInt("film_id");
+            Long filmId = filmGenreRows.getLong("film_id");
             Film.Genre gw = new Film.Genre();
             gw.setId(filmGenreRows.getInt("genre_id"));
             gw.setName(filmGenreRows.getString("genre_name"));
@@ -288,15 +292,15 @@ public class FilmStorageImpl implements FilmStorage {
         return filmsGenres;
     }
 
-    private HashMap<Integer, Film.Mpa> selectFilmMpa() {
+    private Map<Long, Film.Mpa> selectFilmMpa() {
         SqlRowSet filmMpaRows = jdbcTemplate.queryForRowSet(
                 "select mpa.film_id, mot.mpa_id, mot.mpa_title from mpa" +
                         " LEFT OUTER JOIN motion_picture_association AS mot" +
                         " ON mpa.mpa_id = mot.mpa_id");
-        HashMap<Integer, Film.Mpa> filmsMpa = new HashMap<>();
+        Map<Long, Film.Mpa> filmsMpa = new HashMap<>();
         while (filmMpaRows.next()) {
             Film.Mpa mw = new Film.Mpa();
-            int id = filmMpaRows.getInt("film_id");
+            Long id = filmMpaRows.getLong("film_id");
             mw.setId(filmMpaRows.getInt("mpa_id"));
             mw.setName(filmMpaRows.getString("mpa_title"));
             filmsMpa.put(id, mw);
@@ -311,6 +315,8 @@ public class FilmStorageImpl implements FilmStorage {
             film.setLikes(selectFilmLikes().get(id));
             if (selectFilmGenre().get(film.getId()) != null) {
                 film.setGenres(selectFilmGenre().get(film.getId()));
+            } else {
+                film.setGenres(new HashSet<>());
             }
         }
     }
@@ -318,6 +324,8 @@ public class FilmStorageImpl implements FilmStorage {
     private void setMpaGenreLikesToOneFilm(Film film) {
         if (selectFilmGenre().get(film.getId()) != null) {
             film.setGenres(selectFilmGenre().get(film.getId()));
+        } else {
+            film.setGenres(new HashSet<>());
         }
         if (!selectFilmLikes().get(film.getId()).isEmpty()) {
             film.setLikes(selectFilmLikes().get(film.getId()));

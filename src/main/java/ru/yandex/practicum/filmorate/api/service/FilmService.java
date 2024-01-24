@@ -18,4 +18,14 @@ public interface FilmService {
     Film removeLike(Long id, Long userId);
 
     List<Film> getTopFilms(Integer count);
+
+    List<Film.Mpa> getMpa();
+
+    Film.Mpa getMpaById(Long id);
+
+    List<Film.Genre> getGenre();
+
+    Film.Genre getGenreById(Long id);
+
+    void deleteFilm(Long id);
 }

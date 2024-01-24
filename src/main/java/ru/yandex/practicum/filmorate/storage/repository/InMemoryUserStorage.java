@@ -14,6 +14,11 @@ public class InMemoryUserStorage implements UserStorage {
 
 
     @Override
+    public void delete(Long id) {
+
+    }
+
+    @Override
     public Optional<User> getUserById(Long id) {
         if (mapOfUsers.containsKey(id)) {
             return Optional.of(mapOfUsers.get(id));
@@ -24,9 +29,6 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User addUser(User user) {
         user.setId(IncrementUtil.getIncrementUserId());
-        if (user.getFriends() == null) {
-            user.setFriends(new HashSet<>());
-        }
         mapOfUsers.put(user.getId(), user);
         return user;
     }
@@ -34,9 +36,6 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public Optional<User> updateUser(User user) {
         if (mapOfUsers.containsKey(user.getId())) {
-            if (user.getFriends() == null) {
-                user.setFriends(new HashSet<>());
-            }
             mapOfUsers.put(user.getId(), user);
             return Optional.of(user);
         }
@@ -47,5 +46,4 @@ public class InMemoryUserStorage implements UserStorage {
     public List<User> getAllUsers() {
         return new ArrayList<>(mapOfUsers.values());
     }
-
 }

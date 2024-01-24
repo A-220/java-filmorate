@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.api.errors.annotations.ReleaseDate;
+import ru.yandex.practicum.filmorate.api.errors.exception.NotFoundException;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
@@ -40,10 +41,21 @@ public class Film {
     private Set<Long> likes = new HashSet<>();
 
     @JsonProperty("mpa")
-    private Mpa mpa;
+    private Mpa mpa = new Mpa();
 
     @JsonProperty("genres")
     private Set<Genre> genres = new HashSet<>();
+
+    public void setLikeToFilm(Long id) {
+        likes.add(id);
+    }
+
+    public void deleteLike(Long id) {
+        if (!likes.contains(id)) {
+            throw new NotFoundException("Not valid id");
+        }
+        likes.remove(id);
+    }
 
     @Data
     public static class Mpa {
