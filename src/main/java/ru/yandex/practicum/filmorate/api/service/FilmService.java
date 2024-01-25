@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.api.service;
 
 import ru.yandex.practicum.filmorate.storage.entity.Film;
+import ru.yandex.practicum.filmorate.storage.entity.Genre;
+import ru.yandex.practicum.filmorate.storage.entity.Mpa;
 
 import java.util.List;
 
@@ -19,13 +21,13 @@ public interface FilmService {
 
     List<Film> getTopFilms(Integer count);
 
-    List<Film.Mpa> getMpa();
+    List<Mpa> getMpa();
 
-    Film.Mpa getMpaById(Long id);
+    Mpa getMpaById(Long id);
 
-    List<Film.Genre> getGenre();
+    List<Genre> getGenre();
 
-    Film.Genre getGenreById(Long id);
+    Genre getGenreById(Long id);
 
     void deleteFilm(Long id);
 }

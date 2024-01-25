@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.storage.repository;
 
 import ru.yandex.practicum.filmorate.storage.entity.Film;
+import ru.yandex.practicum.filmorate.storage.entity.Genre;
+import ru.yandex.practicum.filmorate.storage.entity.Mpa;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,13 +18,13 @@ public interface FilmStorage {
 
     List<Film> getTopFilms(Integer count);
 
-    List<Film.Mpa> mpa();
+    List<Mpa> mpa();
 
-    Film.Mpa mpaById(Long id);
+    Mpa mpaById(Long id);
 
-    List<Film.Genre> genre();
+    List<Genre> genre();
 
-    Film.Genre genreById(Long id);
+    Genre genreById(Long id);
 
     void delete(Long id);
 }

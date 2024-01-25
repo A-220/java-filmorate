@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.api.errors.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.storage.entity.Film;
+import ru.yandex.practicum.filmorate.storage.entity.Genre;
+import ru.yandex.practicum.filmorate.storage.entity.Mpa;
 import ru.yandex.practicum.filmorate.storage.repository.FilmStorage;
 
 import java.util.List;
@@ -23,21 +25,21 @@ public class FilmServiceImpl implements FilmService {
     public static final String EMPTY_LIST_WARN = "The list of films is empty";
 
 
-    public List<Film.Mpa> getMpa() {
+    public List<Mpa> getMpa() {
         return filmRepository.mpa();
     }
 
-    public Film.Mpa getMpaById(Long id) {
+    public Mpa getMpaById(Long id) {
         return filmRepository.mpaById(id);
     }
 
     @Override
-    public List<Film.Genre> getGenre() {
+    public List<Genre> getGenre() {
         return filmRepository.genre();
     }
 
     @Override
-    public Film.Genre getGenreById(Long id) {
+    public Genre getGenreById(Long id) {
         return filmRepository.genreById(id);
     }
 

@@ -56,17 +56,5 @@ public class Film {
         }
         likes.remove(id);
     }
-
-    @Data
-    public static class Mpa {
-        private int id;
-        private String name;
-    }
-
-    @Data
-    public static class Genre {
-        private int id;
-        private String name;
-    }
 }
 

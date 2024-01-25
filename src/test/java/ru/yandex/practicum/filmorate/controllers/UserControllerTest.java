@@ -2,12 +2,8 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.api.controllers.UserController;
 import ru.yandex.practicum.filmorate.storage.entity.User;
-import ru.yandex.practicum.filmorate.storage.repository.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.api.service.UserServiceImpl;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -17,20 +13,12 @@ import java.time.LocalDate;
 import java.util.Set;
 
 class UserControllerTest {
-
-    UserController userController;
     private static Validator validator;
 
     @BeforeAll
     public static void getValidator() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
-    }
-
-
-    @BeforeEach
-    void setUp() {
-        userController = new UserController(new UserServiceImpl(new InMemoryUserStorage()));
     }
 
     @Test

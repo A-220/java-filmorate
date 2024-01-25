@@ -5,7 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.storage.entity.Film;
-import ru.yandex.practicum.filmorate.storage.repository.db.FilmStorageImpl;
+import ru.yandex.practicum.filmorate.storage.entity.Mpa;
+import ru.yandex.practicum.filmorate.storage.repository.FilmStorageImpl;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -21,7 +22,7 @@ class FilmDbStorageTest {
 
     @Test
     public void testFindFilmById() {
-        var mpa = new Film.Mpa();
+        var mpa = new Mpa();
         mpa.setId(1);
         var film = Film.builder()
                 .name("test name")

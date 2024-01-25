@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.repository.db;
+package ru.yandex.practicum.filmorate.storage.repository;
 
 import lombok.SneakyThrows;
 import org.springframework.context.annotation.Primary;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.api.errors.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.api.service.UserServiceImpl;
 import ru.yandex.practicum.filmorate.storage.entity.User;
-import ru.yandex.practicum.filmorate.storage.repository.UserStorage;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
