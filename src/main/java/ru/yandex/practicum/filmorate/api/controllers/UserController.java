@@ -40,13 +40,13 @@ public class UserController {
     }
 
     @GetMapping("{id}/friends")
-    public List<User> getAllFriends(@PathVariable(value = "id") Long id) {
+    public LinkedHashSet<User> getAllFriends(@PathVariable(value = "id") Long id) {
         return userService.getAllFriends(id);
     }
 
     @GetMapping("{id}/friends/common/{otherId}")
-    public List<User> getCommonFriends(@PathVariable(value = "id") Long id,
-                                       @PathVariable(value = "otherId") Long otherId) {
+    public Set<User> getCommonFriends(@PathVariable(value = "id") Long id,
+                                      @PathVariable(value = "otherId") Long otherId) {
         return userService.getCommonFriends(id, otherId);
     }
 
@@ -69,5 +69,8 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-
+    @DeleteMapping("{id}")
+    public void deleteUser(@PathVariable(value = "id") Long id) {
+        userService.deleteUser(id);
+    }
 }

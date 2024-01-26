@@ -2,12 +2,8 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.api.controllers.FilmController;
 import ru.yandex.practicum.filmorate.storage.entity.Film;
-import ru.yandex.practicum.filmorate.storage.repository.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.api.service.FilmServiceImpl;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -18,19 +14,12 @@ import java.util.Set;
 
 
 class FilmControllerTest {
-
-    FilmController filmController;
     private static Validator validator;
 
     @BeforeAll
     public static void getValidator() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
-    }
-
-    @BeforeEach
-    void setUp() {
-        filmController = new FilmController(new FilmServiceImpl(new InMemoryFilmStorage()));
     }
 
     @Test

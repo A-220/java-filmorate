@@ -27,10 +27,4 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ApiError(HttpStatus.NOT_FOUND.value(), e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ApiError> handThrowable(final Exception e) {
-        log.error("400 bad request {}", e.getMessage(), e);
-        return new ResponseEntity<>(new ApiError(HttpStatus.BAD_REQUEST.value(), e.getMessage()), HttpStatus.BAD_REQUEST);
-    }
 }

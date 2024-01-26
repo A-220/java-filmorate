@@ -2,7 +2,9 @@ package ru.yandex.practicum.filmorate.api.service;
 
 import ru.yandex.practicum.filmorate.storage.entity.User;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public interface UserService {
     User getUserById(Long id);
@@ -11,13 +13,15 @@ public interface UserService {
 
     User updateUser(User user);
 
+    void deleteUser(Long id);
+
     List<User> getAllUsers();
 
     User addNewFriend(Long id, Long friendId);
 
     User deleteFriend(Long id, Long friendId);
 
-    List<User> getAllFriends(Long id);
+    LinkedHashSet<User> getAllFriends(Long id);
 
-    List<User> getCommonFriends(Long id, Long userId);
+    Set<User> getCommonFriends(Long id, Long userId);
 }

@@ -2,13 +2,12 @@ package ru.yandex.practicum.filmorate.api.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.api.errors.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.storage.entity.User;
 import ru.yandex.practicum.filmorate.storage.repository.UserStorage;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -16,18 +15,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Autowired
     private final UserStorage userRepository;
     public static final String NOT_FOUND_USER = "User with id %s doesn't exist.";
     public static final String SUCCESSFUL_ADD_USER = "Successful add user with id: {}";
     public static final String SUCCESSFUL_UPDATE_USER = "Successful update user with id: {}";
-    public static final String SUCCESSFUL_ADD_FRIEND = "Successful add new friend with id: {}, for user with id: {}";
     public static final String SUCCESSFUL_DELETE_FRIEND = "Successful delete friend with id: {}, for user with id: {}";
-    public static final String USER_ALREADY_FRIEND = "User with id: {}, already friend with user with id: {}";
-    public static final String USER_NOT_A_FRIEND = "User with id: {}, not a friend for user with id: {}";
     public static final String EMPTY_LIST_WARN = "The list of users is empty";
-    public static final String EMPTY_LIST_OF_FRIENDS = "The list of friends is empty";
-    public static final String EMPTY_LIST_OF_COMMON_FRIENDS = "The list of common friends is empty";
     public static final String USER_CANNOT_BE_FRIEND_WITH_SELF = "User cannot be friend with them self";
 
     @Override
@@ -52,6 +45,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void deleteUser(Long id) {
+        userRepository.delete(id);
+    }
+
+    @Override
     public List<User> getAllUsers() {
         var listOfUsers = userRepository.getAllUsers();
         if (listOfUsers.isEmpty()) {
@@ -62,23 +60,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User addNewFriend(Long id, Long friendId) {
-        if (id.equals(friendId)) {
-            log.warn(USER_CANNOT_BE_FRIEND_WITH_SELF);
-            return getUserById(id);
-        }
+        User user = getUserById(id);
+        getUserById(friendId);
 
-        var user = getUserById(id);
-        var friend = getUserById(friendId);
+        user.setFriendStatus(friendId, "Запрос отправлен");
 
-        if (user.getFriends().contains(friendId)) {
-            log.warn(USER_ALREADY_FRIEND, friendId, id);
-            return user;
-        }
-
-        addUserFriendList(user, friendId);
-        addUserFriendList(friend, id);
-
-        log.info(SUCCESSFUL_ADD_FRIEND, friendId, id);
+        updateUser(user);
         return user;
     }
 
@@ -90,44 +77,32 @@ public class UserServiceImpl implements UserService {
             return getUserById(id);
         }
 
-        var user = getUserById(id);
-        var friend = getUserById(friendId);
+        User user = getUserById(id);
 
-        if (!user.getFriends().contains(friendId)) {
-            log.warn(USER_NOT_A_FRIEND, friendId, id);
-            return user;
-        }
-
-        removeUserFriendList(user, friendId);
-        removeUserFriendList(friend, id);
-
+        user.deleteFriend(friendId);
+        updateUser(user);
 
         log.info(SUCCESSFUL_DELETE_FRIEND, friendId, id);
         return user;
     }
 
     @Override
-    public List<User> getAllFriends(Long id) {
-        var user = getUserById(id);
-        if (user.getFriends().isEmpty()) {
-            log.warn(EMPTY_LIST_OF_FRIENDS);
-        }
-        return user.getFriends().stream()
+    public LinkedHashSet<User> getAllFriends(Long id) {
+        User user = getUserById(id);
+        return user.getFriendStatus().keySet().stream()
                 .map(this::getUserById)
-                .collect(Collectors.toList());
+                .sorted(Comparator.comparing(User::getId))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
-    public List<User> getCommonFriends(Long id, Long userId) {
-        var userFriends = getAllFriends(id);
-        var otherUserFriends = getAllFriends(userId);
-        var listOfCommonFriends = userFriends.stream()
-                .filter(otherUserFriends::contains)
-                .collect(Collectors.toList());
-        if (listOfCommonFriends.isEmpty()) {
-            log.warn(EMPTY_LIST_OF_COMMON_FRIENDS);
-        }
-        return listOfCommonFriends;
+    public Set<User> getCommonFriends(Long id, Long userId) {
+        Set<Long> i = getUserById(id).getFriendStatus().keySet();
+        Set<Long> j = getUserById(userId).getFriendStatus().keySet();
+        return i.stream()
+                .filter(j::contains)
+                .map(this::getUserById)
+                .collect(Collectors.toSet());
     }
 
 
@@ -135,18 +110,6 @@ public class UserServiceImpl implements UserService {
         if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
-    }
-
-    private void addUserFriendList(User user, Long friendId) {
-        var friends = user.getFriends();
-        friends.add(friendId);
-        user.setFriends(friends);
-    }
-
-    private void removeUserFriendList(User user, Long friendId) {
-        var friends = user.getFriends();
-        friends.remove(friendId);
-        user.setFriends(friends);
     }
 
 }
