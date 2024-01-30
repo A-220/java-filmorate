@@ -3,9 +3,9 @@ package ru.yandex.practicum.filmorate.api.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.api.errors.ErrorsHandler;
 import ru.yandex.practicum.filmorate.api.service.UserService;
 import ru.yandex.practicum.filmorate.storage.entity.User;
-import ru.yandex.practicum.filmorate.api.errors.ErrorsHandlerUtil;
 
 import javax.validation.Valid;
 import java.util.*;
@@ -15,10 +15,12 @@ import java.util.*;
 public class UserController {
 
     private final UserService userService;
+    private final ErrorsHandler errorsHandler;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ErrorsHandler errorsHandler) {
         this.userService = userService;
+        this.errorsHandler = errorsHandler;
     }
 
     @GetMapping("{id}")
@@ -53,14 +55,14 @@ public class UserController {
 
     @PostMapping
     public User addUser(@Valid @RequestBody User user, BindingResult bindingResult) {
-        ErrorsHandlerUtil.throwValidationExceptionIfErrorsExist(bindingResult);
+        errorsHandler.throwValidationExceptionIfErrorsExist(bindingResult);
         return userService.addUser(user);
     }
 
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user, BindingResult bindingResult) {
-        ErrorsHandlerUtil.throwValidationExceptionIfErrorsExist(bindingResult);
+        errorsHandler.throwValidationExceptionIfErrorsExist(bindingResult);
         return userService.updateUser(user);
     }
 

@@ -3,9 +3,9 @@ package ru.yandex.practicum.filmorate.api.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.api.errors.ErrorsHandler;
 import ru.yandex.practicum.filmorate.storage.entity.Film;
 import ru.yandex.practicum.filmorate.api.service.FilmService;
-import ru.yandex.practicum.filmorate.api.errors.ErrorsHandlerUtil;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -15,10 +15,12 @@ import java.util.List;
 public class FilmController {
 
     private final FilmService filmService;
+    private final ErrorsHandler errorsHandler;
 
     @Autowired
-    public FilmController(FilmService filmService) {
+    public FilmController(FilmService filmService, ErrorsHandler errorsHandler) {
         this.filmService = filmService;
+        this.errorsHandler = errorsHandler;
     }
 
     @GetMapping("/{id}")
@@ -29,13 +31,13 @@ public class FilmController {
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film, BindingResult bindingResult) {
-        ErrorsHandlerUtil.throwValidationExceptionIfErrorsExist(bindingResult);
+        errorsHandler.throwValidationExceptionIfErrorsExist(bindingResult);
         return filmService.addFilm(film);
     }
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film, BindingResult bindingResult) {
-        ErrorsHandlerUtil.throwValidationExceptionIfErrorsExist(bindingResult);
+        errorsHandler.throwValidationExceptionIfErrorsExist(bindingResult);
         return filmService.updateFilm(film);
     }
 
