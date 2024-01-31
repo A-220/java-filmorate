@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,6 +13,7 @@ import ru.yandex.practicum.filmorate.api.errors.exception.NotFoundException;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -45,6 +48,9 @@ public class Film {
 
     @JsonProperty("genres")
     private Set<Genre> genres = new HashSet<>();
+
+    @JsonProperty(value = "directors", required = false)
+    private Set<Director> directors;
 
     public void setLikeToFilm(Long id) {
         likes.add(id);
