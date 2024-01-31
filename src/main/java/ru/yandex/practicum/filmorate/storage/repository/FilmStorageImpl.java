@@ -14,11 +14,11 @@ import ru.yandex.practicum.filmorate.storage.entity.Film;
 import ru.yandex.practicum.filmorate.storage.entity.Genre;
 import ru.yandex.practicum.filmorate.storage.entity.Mpa;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static ru.yandex.practicum.filmorate.api.service.FilmServiceImpl.FILM_NOT_FOUND_WARN;
 
 @Component("FilmStorageJdbc")
 @Primary
@@ -432,6 +432,54 @@ public class FilmStorageImpl implements FilmStorage {
             film.setLikes(selectFilmLikes().get(film.getId()));
         }
         film.setMpa(selectFilmMpa().get(film.getId()));
+    }
+
+    @Override
+    public List<Film> getMostPopularFilms(Integer count, Long genreId, Integer year) {
+        List<Film> MostPopularFilms = new LinkedList<>();
+
+        for (Long id : getPopularFilmsIds(count, genreId, year)) {
+            Film film = getFilmById(id).orElseThrow(() -> new NotFoundException(String.format(FILM_NOT_FOUND_WARN, id)));
+            MostPopularFilms.add(film);
+        }
+        setMpaGenreLikes(MostPopularFilms);
+
+        if
+
+        return new ArrayList<>(MostPopularFilms);
+    }
+
+    private List<Long> getPopularFilmsIds(Integer count, Long genreId, Integer year) {
+        StringBuilder sqlQuery = new StringBuilder();
+        sqlQuery
+                .append("SELECT f.film_id, COUNT(l.user_id) AS count_likes FROM film AS f ")
+                .append("LEFT JOIN likes AS l ON l.film_id = f.film_id ");
+        if (genreId != null && year != null) {
+            sqlQuery
+                    .append("RIGHT JOIN film_genre AS fg ON fg.film_id = f.film_id ")
+                    .append("WHERE fg.genre_id = ")
+                    .append(genreId)
+                    .append("AND EXTRACT(YEAR FROM f.releaseDate) = ")
+                    .append(year);
+        } else if (genreId != null) {
+            sqlQuery
+                    .append("RIGHT JOIN film_genre AS fg ON fg.film_id = f.film_id ")
+                    .append("WHERE fg.genre_id = ")
+                    .append(genreId);
+        } else if (year != null) {
+            sqlQuery
+                    .append("WHERE EXTRACT(YEAR FROM f.releaseDate) = ")
+                    .append(year);
+        }
+
+        sqlQuery
+                .append("GROUP BY f.film_id ORDER BY count_likes DESC LIMIT ")
+                .append(count);
+
+        return jdbcTemplate.query(sqlQuery.toString(), this::getId);
+    }
+    private Long getId(ResultSet rs, int rowNum) throws SQLException {
+        return rs.getLong("film_id");
     }
 
     private Map<Long, Director> getDirectorForFilm() {
