@@ -16,6 +16,8 @@ public interface FilmStorage {
 
     Optional<Film> getFilmById(Long id);
 
+    List<Film> getSortedByDirector(Long idDirector, String string);
+
     List<Film> getTopFilms(Integer count);
 
     List<Mpa> mpa();
