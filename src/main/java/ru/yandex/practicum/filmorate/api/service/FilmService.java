@@ -30,4 +30,6 @@ public interface FilmService {
     Genre getGenreById(Long id);
 
     void deleteFilm(Long id);
+
+    List<Film> getCommonFilms(Long userId, Long friendId);
 }

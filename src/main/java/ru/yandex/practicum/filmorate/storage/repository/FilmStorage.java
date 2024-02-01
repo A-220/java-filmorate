@@ -27,4 +27,6 @@ public interface FilmStorage {
     Genre genreById(Long id);
 
     void delete(Long id);
+
+    List<Film> getCommonFilms(Long userId, Long friendId);
 }

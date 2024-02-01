@@ -16,6 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component("FilmStorageJdbc")
 @Primary
@@ -206,6 +207,46 @@ public class FilmStorageImpl implements FilmStorage {
         setMpaGenreLikes(topFilms);
 
         return new ArrayList<>(topFilms);
+    }
+
+    public List<Film> getCommonFilms(Long userId, Long friendId) {
+        List<Film> userFilms = new LinkedList<>();
+        List<Film> friendFilms = new LinkedList<>();
+        String sql = "SELECT *, count(user_id) AS rating FROM likes " +
+                "LEFT OUTER JOIN film ON likes.film_id = film.film_id " +
+                "WHERE user_id = ? " +
+                "GROUP BY likes.film_id " +
+                "ORDER BY rating";
+        SqlRowSet filmRows = jdbcTemplate.queryForRowSet(sql, userId);
+        while (filmRows.next()) {
+            var film = Film.builder()
+                    .name(filmRows.getString("name"))
+                    .description(filmRows.getString("description"))
+                    .releaseDate(filmRows.getDate("release_date").toLocalDate())
+                    .duration(filmRows.getInt("duration"))
+                    .id(filmRows.getLong("film_id"))
+                    .build();
+
+            userFilms.add(film);
+        }
+        setMpaGenreLikes(userFilms);
+
+        filmRows = jdbcTemplate.queryForRowSet(sql, friendId);
+        while (filmRows.next()) {
+            var film = Film.builder()
+                    .name(filmRows.getString("name"))
+                    .description(filmRows.getString("description"))
+                    .releaseDate(filmRows.getDate("release_date").toLocalDate())
+                    .duration(filmRows.getInt("duration"))
+                    .id(filmRows.getLong("film_id"))
+                    .build();
+
+            friendFilms.add(film);
+        }
+        setMpaGenreLikes(friendFilms);
+        return userFilms.stream()
+                .filter(friendFilms::contains)
+                .collect(Collectors.toList());
     }
 
     private void insertFilmLikes(Film film, boolean update) {

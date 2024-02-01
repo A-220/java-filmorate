@@ -58,7 +58,6 @@ public class FilmController {
         return filmService.getTopFilms(count);
     }
 
-
     @GetMapping
     public List<Film> getAllFilms() {
         return filmService.getAllFilms();
@@ -69,5 +68,10 @@ public class FilmController {
         filmService.deleteFilm(id);
     }
 
+    @GetMapping("/common")
+    public List<Film> getCommonFilms(@RequestParam Long userId,
+                                     @RequestParam Long friendId) {
+        return filmService.getCommonFilms(userId, friendId);
+    }
 
 }
