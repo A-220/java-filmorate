@@ -16,6 +16,8 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.*;
 
+import static ru.yandex.practicum.filmorate.api.service.UserServiceImpl.NOT_FOUND_USER;
+
 @Component("UserStorageJdbc")
 @Primary
 public class UserStorageImpl implements UserStorage {
@@ -27,7 +29,7 @@ public class UserStorageImpl implements UserStorage {
 
     private void checkUserExist(Long id) {
         if (!(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM users WHERE user_id = ?", Long.class, id) > 0)) {
-            throw new NotFoundException(UserServiceImpl.NOT_FOUND_USER);
+            throw new NotFoundException(NOT_FOUND_USER);
         }
     }
 
@@ -83,11 +85,16 @@ public class UserStorageImpl implements UserStorage {
 
     @Override
     public void delete(Long id) {
-        String deleteFromUsers = "delete from users where user_id = ?";
-        jdbcTemplate.update(deleteFromUsers, id);
+        User user = getUserById(id).orElseThrow(() -> new NotFoundException(String.format(NOT_FOUND_USER, id)));
+
+        String deleteFriends = "delete from friends where users_id = ?";
+        jdbcTemplate.update(deleteFriends, user.getId());
 
         String deleteFromLikes = "delete from likes where user_id = ?";
         jdbcTemplate.update(deleteFromLikes, id);
+
+        String deleteFromUsers = "delete from users where user_id = ?";
+        jdbcTemplate.update(deleteFromUsers, id);
     }
 
     @SneakyThrows
