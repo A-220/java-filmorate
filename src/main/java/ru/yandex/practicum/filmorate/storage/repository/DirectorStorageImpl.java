@@ -26,7 +26,7 @@ public class DirectorStorageImpl implements DirectorStorage {
                 "SELECT * FROM directors");
         List<Director> directors = new ArrayList<>();
 
-        while (rs.next()){
+        while (rs.next()) {
             Director director = new Director(
                     rs.getLong("director_id"),
                     rs.getString("director_name")
@@ -40,7 +40,7 @@ public class DirectorStorageImpl implements DirectorStorage {
     public Director get(Long id) {
         SqlRowSet rs = jdbcTemplate.queryForRowSet(
                 "SELECT * FROM directors WHERE director_id = ?", id);
-        if (rs.next()){
+        if (rs.next()) {
             return new Director(
                     rs.getLong("director_id"),
                     rs.getString("director_name")
@@ -51,7 +51,7 @@ public class DirectorStorageImpl implements DirectorStorage {
 
     @Override
     public Director create(Director director) {
-        if (director.getName().equals(" ")){
+        if (director.getName().equals(" ")) {
             throw new RuntimeException("Name cannot be empty");
         }
         KeyHolder keyHolder = new GeneratedKeyHolder();
