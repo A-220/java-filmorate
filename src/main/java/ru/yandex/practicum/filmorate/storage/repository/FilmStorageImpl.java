@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.repository;
 
+import lombok.SneakyThrows;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -186,6 +187,7 @@ public class FilmStorageImpl implements FilmStorage {
         return Optional.empty();
     }
 
+    @SneakyThrows
     @Override
     public List<Film> getSortedByDirector(Long idDirector, String string) {
         List<Film> films = new ArrayList<>();
@@ -197,6 +199,10 @@ public class FilmStorageImpl implements FilmStorage {
                     films.add(film);
                 }
             }
+        }
+
+        if (films.isEmpty()) {
+            throw new NotFoundException("нет такого директора");
         }
 
         if ("year".equals(string)) {
