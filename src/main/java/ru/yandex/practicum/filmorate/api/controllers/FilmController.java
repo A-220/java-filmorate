@@ -77,7 +77,6 @@ public class FilmController {
     }
 
     @GetMapping("/search")
-    //?query=крад&by=director,title
     public List<Film> search(
             @RequestParam(name = "query") String query,
             @RequestParam(name = "by") String title) {
