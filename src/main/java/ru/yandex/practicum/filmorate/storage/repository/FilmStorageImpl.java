@@ -13,12 +13,15 @@ import ru.yandex.practicum.filmorate.storage.entity.Director;
 import ru.yandex.practicum.filmorate.storage.entity.Film;
 import ru.yandex.practicum.filmorate.storage.entity.Genre;
 import ru.yandex.practicum.filmorate.storage.entity.Mpa;
+import ru.yandex.practicum.filmorate.storage.entity.User;
 
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.api.service.FilmServiceImpl.FILM_NOT_FOUND_WARN;
+
+import static ru.yandex.practicum.filmorate.api.service.UserServiceImpl.NOT_FOUND_USER;
 
 @Component("FilmStorageJdbc")
 @Primary
@@ -160,10 +163,11 @@ public class FilmStorageImpl implements FilmStorage {
         return film;
     }
 
-    public void delete(Long id) {
+    public void deleteFilm(Long id) {
         checkFilmExist(id);
+        Film film = getFilmById(id).orElseThrow(() -> new NotFoundException(String.format(NOT_FOUND_USER, id)));
         String sql = "delete from film where film_id = ?";
-        jdbcTemplate.update(sql, id);
+        jdbcTemplate.update(sql, film.getId());
     }
 
     @Override

@@ -29,6 +29,8 @@ public interface FilmService {
 
     Genre getGenreById(Long id);
 
+    void delete(Long id);
+
     void deleteFilm(Long id);
 
     List<Film> getMostPopularFilms(Integer count, Long genreId, Integer year);
