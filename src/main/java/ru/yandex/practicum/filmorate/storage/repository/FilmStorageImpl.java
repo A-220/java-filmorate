@@ -239,7 +239,6 @@ public class FilmStorageImpl implements FilmStorage {
     }
 
     public List<Film> search(String query, String title) {
-        String finalQuery = query.toLowerCase();
         List<Film> allFilms = getAllFilms();
         List<Film> searchResults = new ArrayList<>();
 
@@ -247,24 +246,24 @@ public class FilmStorageImpl implements FilmStorage {
             case "director":
                 searchResults = allFilms.stream()
                         .filter(film -> film.getDirectors().stream()
-                                .anyMatch(director -> director.getName().toLowerCase().contains(finalQuery)))
+                                .anyMatch(director -> director.getName().toLowerCase().contains(query)))
                         .collect(Collectors.toList());
                 break;
 
             case "title":
                 searchResults = allFilms.stream()
-                        .filter(film -> film.getName().toLowerCase().contains(finalQuery))
+                        .filter(film -> film.getName().toLowerCase().contains(query))
                         .collect(Collectors.toList());
                 break;
 
             default:
                 searchResults.addAll(allFilms.stream()
-                        .filter(film -> film.getName().toLowerCase().contains(finalQuery))
+                        .filter(film -> film.getName().toLowerCase().contains(query))
                         .collect(Collectors.toList()));
 
                 searchResults.addAll(allFilms.stream()
                         .filter(film -> film.getDirectors().stream()
-                                .anyMatch(director -> director.getName().toLowerCase().contains(finalQuery)))
+                                .anyMatch(director -> director.getName().toLowerCase().contains(query)))
                         .collect(Collectors.toList()));
                 break;
         }

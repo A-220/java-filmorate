@@ -107,6 +107,8 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public List<Film> search(String query, String title) {
-        return filmRepository.search(query, title);
+        String finalQuery = query.toLowerCase();
+        String finalTitle = title.toLowerCase();
+        return filmRepository.search(finalQuery, finalTitle);
     }
 }
