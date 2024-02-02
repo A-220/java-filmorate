@@ -58,7 +58,6 @@ public class UserStorageImpl implements UserStorage {
         }
     }
 
-
     @Override
     public User addUser(User user) {
         KeyHolder key = new GeneratedKeyHolder();
@@ -144,10 +143,8 @@ public class UserStorageImpl implements UserStorage {
                         .forEach(userFriendMap -> userFriendMap.forEach(user::setFriendStatus));
             });
         }
-
         return users;
     }
-
 
     private Map<Long, List<Map<Long, String>>> makeFriend() {
         SqlRowSet rs = jdbcTemplate.queryForRowSet("SELECT * FROM friends");
@@ -169,8 +166,6 @@ public class UserStorageImpl implements UserStorage {
                 userFriends.put(userId, listOfFriends);
             }
         }
-
         return userFriends;
     }
-
 }

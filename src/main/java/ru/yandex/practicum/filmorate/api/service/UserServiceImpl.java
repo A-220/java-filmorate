@@ -7,7 +7,10 @@ import ru.yandex.practicum.filmorate.api.errors.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.storage.entity.User;
 import ru.yandex.practicum.filmorate.storage.repository.UserStorage;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -69,7 +72,6 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-
     @Override
     public User deleteFriend(Long id, Long friendId) {
         if (id.equals(friendId)) {
@@ -105,11 +107,9 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toSet());
     }
 
-
     private void ensureNameIsSet(User user) {
         if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
     }
-
 }
