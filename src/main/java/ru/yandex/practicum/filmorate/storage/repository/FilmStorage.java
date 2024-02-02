@@ -28,5 +28,5 @@ public interface FilmStorage {
 
     Genre genreById(Long id);
 
-    void delete(Long id);
+    void deleteFilm(Long id);
 }
