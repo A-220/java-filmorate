@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
