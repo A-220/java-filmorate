@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,7 +7,10 @@ import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.api.errors.annotations.ReleaseDate;
 import ru.yandex.practicum.filmorate.api.errors.exception.NotFoundException;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -40,11 +42,11 @@ public class Film {
 
     private Set<Long> likes = new HashSet<>();
 
-    @JsonProperty("mpa")
     private Mpa mpa = new Mpa();
 
-    @JsonProperty("genres")
     private Set<Genre> genres = new HashSet<>();
+
+    private Set<Director> directors;
 
     public void setLikeToFilm(Long id) {
         likes.add(id);
