@@ -21,8 +21,6 @@ public interface FilmService {
 
     List<Film> getSortedByDirector(Long idDirector, String string);
 
-    List<Film> getTopFilms(Integer count);
-
     List<Mpa> getMpa();
 
     Mpa getMpaById(Long id);

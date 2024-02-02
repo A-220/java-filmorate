@@ -18,8 +18,6 @@ public interface FilmStorage {
 
     List<Film> getSortedByDirector(Long idDirector, String string);
 
-    List<Film> getTopFilms(Integer count);
-
     List<Mpa> mpa();
 
     Mpa mpaById(Long id);
