@@ -202,7 +202,7 @@ public class FilmStorageImpl implements FilmStorage {
         }
 
         if (films.isEmpty()) {
-            throw new NotFoundException("нет такого директора");
+            throw new NotFoundException("Such director does not exist");
         }
 
         if ("year".equals(string)) {

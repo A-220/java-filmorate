@@ -19,8 +19,8 @@ public class DirectorServiceImpl implements DirectorService {
     }
 
     @Override
-    public Director get(Long id) {
-        return directorStorage.get(id);
+    public Director getById(Long id) {
+        return directorStorage.getById(id);
     }
 
     @Override
