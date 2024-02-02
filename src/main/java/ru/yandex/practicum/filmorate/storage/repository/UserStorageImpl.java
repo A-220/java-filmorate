@@ -59,8 +59,6 @@ public class UserStorageImpl implements UserStorage {
             }
         }
     }
-
-
     @Override
     public User addUser(User user) {
         KeyHolder key = new GeneratedKeyHolder();
@@ -155,7 +153,6 @@ public class UserStorageImpl implements UserStorage {
         return users;
     }
 
-
     private Map<Long, List<Map<Long, String>>> makeFriend() {
         SqlRowSet rs = jdbcTemplate.queryForRowSet("SELECT * FROM friends");
         Map<Long, List<Map<Long, String>>> userFriends = new HashMap<>();
@@ -176,7 +173,6 @@ public class UserStorageImpl implements UserStorage {
                 userFriends.put(userId, listOfFriends);
             }
         }
-
         return userFriends;
     }
 

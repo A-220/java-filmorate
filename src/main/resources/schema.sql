@@ -27,8 +27,8 @@ CREATE TABLE IF NOT EXISTS film_genre
 (
     film_id  INTEGER,
     genre_id INTEGER,
-    foreign key (genre_id) references genre (genre_id),
-    foreign key (film_id) references film (film_id)
+    foreign key (genre_id) references genre (genre_id) on delete cascade,
+    foreign key (film_id) references film (film_id) on delete cascade
 );
 
 CREATE TABLE IF NOT EXISTS mpa
