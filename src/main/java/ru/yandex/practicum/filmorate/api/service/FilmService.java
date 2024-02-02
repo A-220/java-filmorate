@@ -32,4 +32,6 @@ public interface FilmService {
     Genre getGenreById(Long id);
 
     void deleteFilm(Long id);
+
+    List<Film> search(String s1, String s2);
 }

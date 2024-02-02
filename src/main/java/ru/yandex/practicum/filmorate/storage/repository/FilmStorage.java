@@ -29,4 +29,6 @@ public interface FilmStorage {
     Genre genreById(Long id);
 
     void delete(Long id);
+
+    List<Film> search(String by, String title);
 }

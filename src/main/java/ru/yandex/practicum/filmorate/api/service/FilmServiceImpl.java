@@ -104,4 +104,9 @@ public class FilmServiceImpl implements FilmService {
     public List<Film> getTopFilms(Integer count) {
         return filmRepository.getTopFilms(count);
     }
+
+    @Override
+    public List<Film> search(String query, String title) {
+        return filmRepository.search(query, title);
+    }
 }

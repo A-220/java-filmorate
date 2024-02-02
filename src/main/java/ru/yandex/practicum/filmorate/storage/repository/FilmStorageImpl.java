@@ -7,6 +7,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.api.comparator.LikesComparator;
 import ru.yandex.practicum.filmorate.api.errors.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.api.service.FilmServiceImpl;
 import ru.yandex.practicum.filmorate.storage.entity.Director;
@@ -18,11 +19,14 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component("FilmStorageJdbc")
 @Primary
 public class FilmStorageImpl implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
+
+    public static final String DIRECTOR_NOT_EXIST = "Such director does not exist";
 
     public FilmStorageImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -171,13 +175,7 @@ public class FilmStorageImpl implements FilmStorage {
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select * from film where film_id = ? " +
                 "group by film_id", id);
         if (filmRows.next()) {
-            var film = Film.builder()
-                    .name(filmRows.getString("name"))
-                    .description(filmRows.getString("description"))
-                    .releaseDate(filmRows.getDate("release_date").toLocalDate())
-                    .duration(filmRows.getInt("duration"))
-                    .id(filmRows.getLong("film_id"))
-                    .build();
+            var film = filmBuilder(filmRows);
 
             setMpaGenreLikesToOneFilm(film);
             setDirectorForOneFilm(film);
@@ -202,13 +200,13 @@ public class FilmStorageImpl implements FilmStorage {
         }
 
         if (films.isEmpty()) {
-            throw new NotFoundException("Such director does not exist");
+            throw new NotFoundException(DIRECTOR_NOT_EXIST);
         }
 
         if ("year".equals(string)) {
             films.sort(Comparator.comparing(Film::getReleaseDate));
         } else if ("likes".equals(string)) {
-            films.sort(Comparator.comparingInt(film -> film.getLikes().size()));
+            films.sort(new LikesComparator());
         } else {
             return Collections.emptyList();
         }
@@ -229,13 +227,7 @@ public class FilmStorageImpl implements FilmStorage {
                 "limit ?)";
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet(sql, count);
         while (filmRows.next()) {
-            var film = Film.builder()
-                    .name(filmRows.getString("name"))
-                    .description(filmRows.getString("description"))
-                    .releaseDate(filmRows.getDate("release_date").toLocalDate())
-                    .duration(filmRows.getInt("duration"))
-                    .id(filmRows.getLong("film_id"))
-                    .build();
+            var film = filmBuilder(filmRows);
 
             topFilms.add(film);
         }
@@ -244,6 +236,52 @@ public class FilmStorageImpl implements FilmStorage {
         setDirectorForFilm(topFilms);
 
         return new ArrayList<>(topFilms);
+    }
+
+    public List<Film> search(String query, String title) {
+        String finalQuery = query.toLowerCase();
+        List<Film> allFilms = getAllFilms();
+        List<Film> searchResults = new ArrayList<>();
+
+        switch (title) {
+            case "director":
+                searchResults = allFilms.stream()
+                        .filter(film -> film.getDirectors().stream()
+                                .anyMatch(director -> director.getName().toLowerCase().contains(finalQuery)))
+                        .collect(Collectors.toList());
+                break;
+
+            case "title":
+                searchResults = allFilms.stream()
+                        .filter(film -> film.getName().toLowerCase().contains(finalQuery))
+                        .collect(Collectors.toList());
+                break;
+
+            default:
+                searchResults.addAll(allFilms.stream()
+                        .filter(film -> film.getName().toLowerCase().contains(finalQuery))
+                        .collect(Collectors.toList()));
+
+                searchResults.addAll(allFilms.stream()
+                        .filter(film -> film.getDirectors().stream()
+                                .anyMatch(director -> director.getName().toLowerCase().contains(finalQuery)))
+                        .collect(Collectors.toList()));
+                break;
+        }
+
+        searchResults.sort(new LikesComparator());
+
+        return searchResults;
+    }
+
+    private Film filmBuilder(SqlRowSet filmRows) {
+        return Film.builder()
+                .name(filmRows.getString("name"))
+                .description(filmRows.getString("description"))
+                .releaseDate(filmRows.getDate("release_date").toLocalDate())
+                .duration(filmRows.getInt("duration"))
+                .id(filmRows.getLong("film_id"))
+                .build();
     }
 
     private void insertFilmLikes(Film film, boolean update) {
