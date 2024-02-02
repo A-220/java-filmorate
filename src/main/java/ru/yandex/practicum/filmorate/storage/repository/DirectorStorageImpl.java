@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.repository;
 
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -20,6 +21,8 @@ public class DirectorStorageImpl implements DirectorStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
+    private final String NAME_CANNOT_BE_EMPTY = "Name cannot be empty";
+
     @Override
     public List<Director> getAll() {
         SqlRowSet rs = jdbcTemplate.queryForRowSet(
@@ -37,7 +40,7 @@ public class DirectorStorageImpl implements DirectorStorage {
     }
 
     @Override
-    public Director get(Long id) {
+    public Director getById(Long id) {
         SqlRowSet rs = jdbcTemplate.queryForRowSet(
                 "SELECT * FROM directors WHERE director_id = ?", id);
         if (rs.next()) {
@@ -46,13 +49,14 @@ public class DirectorStorageImpl implements DirectorStorage {
                     rs.getString("director_name")
             );
         }
-        throw new NotFoundException("Нет такого директора");
+        throw new NotFoundException("Such director does not exist");
     }
 
+    @SneakyThrows
     @Override
     public Director create(Director director) {
         if (director.getName().equals(" ")) {
-            throw new RuntimeException("Name cannot be empty");
+            throw new IllegalAccessException(NAME_CANNOT_BE_EMPTY);
         }
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -70,7 +74,7 @@ public class DirectorStorageImpl implements DirectorStorage {
 
     @Override
     public Director update(Director director) {
-        get(director.getId());
+        getById(director.getId());
         String sql = "update directors set director_name =? where director_id =?";
         jdbcTemplate.update(sql, director.getName(), director.getId());
         return director;

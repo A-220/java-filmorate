@@ -43,13 +43,10 @@ public class Film {
 
     private Set<Long> likes = new HashSet<>();
 
-    @JsonProperty("mpa")
     private Mpa mpa = new Mpa();
 
-    @JsonProperty("genres")
     private Set<Genre> genres = new HashSet<>();
 
-    @JsonProperty(value = "directors", required = false)
     private Set<Director> directors;
 
     public void setLikeToFilm(Long id) {
