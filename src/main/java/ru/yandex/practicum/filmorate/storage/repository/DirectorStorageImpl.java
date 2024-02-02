@@ -21,7 +21,7 @@ public class DirectorStorageImpl implements DirectorStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private final String NAME_CANNOT_BE_EMPTY = "Name cannot be empty";
+    public static final String NAME_CANNOT_BE_EMPTY = "Name cannot be empty";
 
     @Override
     public List<Director> getAll() {
