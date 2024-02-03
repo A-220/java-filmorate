@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.repository;
 
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -243,14 +244,14 @@ public class FilmStorageImpl implements FilmStorage {
     }
 
     private void insertFilmMpa(Film film, boolean update) {
-            if (update) {
-                String deleteMpaSql = "delete from mpa where film_id=?";
-                jdbcTemplate.update(deleteMpaSql, film.getId());
-            }
+        if (update) {
+            String deleteMpaSql = "delete from mpa where film_id=?";
+            jdbcTemplate.update(deleteMpaSql, film.getId());
+        }
 
-            String insertMpaSql = "insert into mpa(film_id, mpa_id) values (?, ?)";
+        String insertMpaSql = "insert into mpa(film_id, mpa_id) values (?, ?)";
 
-            jdbcTemplate.update(insertMpaSql, film.getId(), film.getMpa().getId());
+        jdbcTemplate.update(insertMpaSql, film.getId(), film.getMpa().getId());
     }
 
     private Map<Long, Set<Long>> selectFilmLikes() {
@@ -268,6 +269,29 @@ public class FilmStorageImpl implements FilmStorage {
         }
         return filmsLikes;
     }
+
+    public Map<Long, List<Long>> getAllLikes() {
+        String sql = "SELECT * FROM likes";
+        Map<Long, List<Long>> userLikes = new HashMap<>();
+        try {
+            jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
+                do {
+                    if (userLikes.containsKey(rs.getLong("user_id"))) {
+                        userLikes.get(rs.getLong("user_id")).add(rs.getLong("film_id"));
+                    } else {
+                        List<Long> films = new ArrayList<>();
+                        films.add(rs.getLong("film_id"));
+                        userLikes.put(rs.getLong("user_id"), films);
+                    }
+                } while (rs.next());
+                return null;
+            });
+        } catch (EmptyResultDataAccessException e) {
+            return Map.of();
+        }
+        return userLikes;
+    }
+
 
     private Map<Long, Set<Genre>> selectFilmGenre() {
         SqlRowSet filmGenreRows = jdbcTemplate.queryForRowSet(
