@@ -101,6 +101,11 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
+    public List<Film> getSortedByDirector(Long idDirector, String string) {
+        return filmRepository.getSortedByDirector(idDirector, string);
+    }
+
+    @Override
     public List<Film> getTopFilms(Integer count) {
         return filmRepository.getTopFilms(count);
     }

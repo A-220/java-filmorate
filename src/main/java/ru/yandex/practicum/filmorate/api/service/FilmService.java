@@ -19,6 +19,8 @@ public interface FilmService {
 
     Film removeLike(Long id, Long userId);
 
+    List<Film> getSortedByDirector(Long idDirector, String string);
+
     List<Film> getTopFilms(Integer count);
 
     List<Mpa> getMpa();
