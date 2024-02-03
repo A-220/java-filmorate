@@ -8,7 +8,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.api.errors.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.api.service.UserServiceImpl;
 import ru.yandex.practicum.filmorate.storage.entity.User;
 
 import java.sql.PreparedStatement;
@@ -59,6 +58,7 @@ public class UserStorageImpl implements UserStorage {
             }
         }
     }
+
     @Override
     public User addUser(User user) {
         KeyHolder key = new GeneratedKeyHolder();
@@ -82,7 +82,7 @@ public class UserStorageImpl implements UserStorage {
     }
 
     @Override
-    public void delete(Long id) {
+    public void deleteUser(Long id) {
         User user = getUserById(id).orElseThrow(() -> new NotFoundException(String.format(NOT_FOUND_USER, id)));
 
         String deleteFriends = "delete from friends where users_id = ?";
@@ -175,5 +175,4 @@ public class UserStorageImpl implements UserStorage {
         }
         return userFriends;
     }
-
 }

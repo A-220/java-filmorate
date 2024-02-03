@@ -8,7 +8,9 @@ import ru.yandex.practicum.filmorate.api.service.UserService;
 import ru.yandex.practicum.filmorate.storage.entity.User;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/users")
@@ -27,7 +29,6 @@ public class UserController {
     public User getUserById(@PathVariable(value = "id") Long id) {
         return userService.getUserById(id);
     }
-
 
     @PutMapping("{id}/friends/{friendId}")
     public User addNewFriend(@PathVariable(value = "id") Long id,
@@ -52,13 +53,11 @@ public class UserController {
         return userService.getCommonFriends(id, otherId);
     }
 
-
     @PostMapping
     public User addUser(@Valid @RequestBody User user, BindingResult bindingResult) {
         errorsHandler.throwValidationExceptionIfErrorsExist(bindingResult);
         return userService.addUser(user);
     }
-
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user, BindingResult bindingResult) {
@@ -74,6 +73,6 @@ public class UserController {
 
     @DeleteMapping("{id}")
     public void deleteUser(@PathVariable(value = "id") Long id) {
-        userService.deleteUser(id);
+        userService.delete(id);
     }
 }
