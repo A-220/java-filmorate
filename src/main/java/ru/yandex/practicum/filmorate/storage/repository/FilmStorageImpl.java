@@ -290,11 +290,6 @@ public class FilmStorageImpl implements FilmStorage {
         String insertMpaSql = "insert into mpa(film_id, mpa_id) values (?, ?)";
 
         jdbcTemplate.update(insertMpaSql, film.getId(), film.getMpa().getId());
-
-
-        String insertMpaSql = "insert into mpa(film_id, mpa_id) values (?, ?)";
-
-        jdbcTemplate.update(insertMpaSql, film.getId(), film.getMpa().getId());
     }
 
     private void insertFilmDirector(Film film, boolean update) {
