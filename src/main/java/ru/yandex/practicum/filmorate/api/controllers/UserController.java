@@ -30,7 +30,6 @@ public class UserController {
         return userService.getUserById(id);
     }
 
-
     @PutMapping("{id}/friends/{friendId}")
     public User addNewFriend(@PathVariable(value = "id") Long id,
                              @PathVariable(value = "friendId") Long friendId) {
@@ -74,6 +73,6 @@ public class UserController {
 
     @DeleteMapping("{id}")
     public void deleteUser(@PathVariable(value = "id") Long id) {
-        userService.deleteUser(id);
+        userService.delete(id);
     }
 }
