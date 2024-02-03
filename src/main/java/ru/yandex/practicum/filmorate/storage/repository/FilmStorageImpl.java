@@ -413,33 +413,31 @@ public class FilmStorageImpl implements FilmStorage {
     }
 
     private List<Long> getPopularFilmsIds(Integer count, Long genreId, Integer year) {
+        Optional<Long> presentGenreId = Optional.ofNullable(genreId);
+        Optional<Integer> presentYear = Optional.ofNullable(year);
+
         StringBuilder sqlQuery = new StringBuilder();
         sqlQuery
                 .append("SELECT f.film_id, COUNT(l.user_id) AS count_likes FROM film AS f ")
                 .append("LEFT JOIN likes AS l ON l.film_id = f.film_id ");
-        if (genreId != null && year != null) {
-            sqlQuery
-                    .append("RIGHT JOIN film_genre AS fg ON fg.film_id = f.film_id ")
-                    .append("WHERE fg.genre_id = ")
-                    .append(genreId)
-                    .append("AND EXTRACT(YEAR FROM f.release_date) = ")
-                    .append(year);
-        } else if (genreId != null) {
-            sqlQuery
-                    .append("RIGHT JOIN film_genre AS fg ON fg.film_id = f.film_id ")
-                    .append("WHERE fg.genre_id = ")
-                    .append(genreId);
-        } else if (year != null) {
-            sqlQuery
-                    .append("WHERE EXTRACT(YEAR FROM f.release_date) = ")
-                    .append(year);
-        }
+        presentGenreId.map(g ->
+                sqlQuery
+                        .append("RIGHT JOIN film_genre AS fg ON fg.film_id = f.film_id ")
+                        .append("WHERE fg.genre_id = ")
+                        .append(presentGenreId.get())
+        );
+        presentYear.map(y ->
+                sqlQuery.append(presentGenreId.isPresent() ? " AND" : " WHERE")
+                        .append(" EXTRACT(YEAR FROM f.release_date) = ")
+                        .append(presentYear.get())
+        );
         sqlQuery
                 .append("GROUP BY f.film_id ORDER BY count_likes DESC LIMIT ")
                 .append(count);
 
         return jdbcTemplate.query(sqlQuery.toString(), this::getId);
     }
+
 
     private Long getId(ResultSet rs, int rowNum) throws SQLException {
         return rs.getLong("film_id");
