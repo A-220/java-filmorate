@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.storage.repository.FilmStorage;
 
 import java.util.List;
 
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -23,7 +22,6 @@ public class FilmServiceImpl implements FilmService {
     public static final String SUCCESSFUL_ADD_FILM = "Successful add film with id: {}";
     public static final String SUCCESSFUL_UPDATE_FILM = "Successful update film with id: {}";
     public static final String EMPTY_LIST_WARN = "The list of films is empty";
-
 
     public List<Mpa> getMpa() {
         return filmRepository.mpa();
@@ -75,7 +73,6 @@ public class FilmServiceImpl implements FilmService {
         }
         return listOfFilms;
     }
-
 
     @Override
     public Film setLike(Long id, Long userId) {
