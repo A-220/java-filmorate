@@ -15,9 +15,10 @@ import java.util.List;
 @RequestMapping("/directors")
 @AllArgsConstructor
 public class DirectorController {
-    private final DirectorService directorService;
-    private final ErrorsHandler errorsHandler;
 
+    private final DirectorService directorService;
+
+    private final ErrorsHandler errorsHandler;
 
     @GetMapping
     public List<Director> getAll() {
