@@ -271,20 +271,22 @@ public class FilmStorageImpl implements FilmStorage {
 
         filmRows = jdbcTemplate.queryForRowSet(sql, friendId);
         while (filmRows.next()) {
-            var film = Film.builder()
-                    .name(filmRows.getString("name"))
-                    .description(filmRows.getString("description"))
-                    .releaseDate(filmRows.getDate("release_date").toLocalDate())
-                    .duration(filmRows.getInt("duration"))
-                    .id(filmRows.getLong("film_id"))
-                    .build();
-
-            friendFilms.add(film);
+            friendFilms.add(filmBuilder(filmRows));
         }
         setMpaGenreLikes(friendFilms);
         return userFilms.stream()
                 .filter(friendFilms::contains)
                 .collect(Collectors.toList());
+    }
+
+    private Film filmBuilder(SqlRowSet filmRows) {
+        return Film.builder()
+                .name(filmRows.getString("name"))
+                .description(filmRows.getString("description"))
+                .releaseDate(filmRows.getDate("release_date").toLocalDate())
+                .duration(filmRows.getInt("duration"))
+                .id(filmRows.getLong("film_id"))
+                .build();
     }
 
     private void insertFilmLikes(Film film, boolean update) {
