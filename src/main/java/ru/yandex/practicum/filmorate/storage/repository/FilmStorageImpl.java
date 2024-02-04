@@ -20,6 +20,10 @@ import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.api.service.FilmServiceImpl.FILM_NOT_FOUND_WARN;
 
+import static ru.yandex.practicum.filmorate.api.service.UserServiceImpl.NOT_FOUND_USER;
+
+import static ru.yandex.practicum.filmorate.api.service.UserServiceImpl.NOT_FOUND_USER;
+
 @Component("FilmStorageJdbc")
 @Primary
 public class FilmStorageImpl implements FilmStorage {
@@ -160,10 +164,18 @@ public class FilmStorageImpl implements FilmStorage {
         return film;
     }
 
-    public void delete(Long id) {
+    public void deleteFilm(Long id) {
         checkFilmExist(id);
-        String sql = "delete from film where film_id = ?";
-        jdbcTemplate.update(sql, id);
+        Film film = getFilmById(id).orElseThrow(() -> new NotFoundException(String.format(NOT_FOUND_USER, id)));
+
+        String deleteFromGenreFilm = "delete from film_genre where film_id = ?";
+        jdbcTemplate.update(deleteFromGenreFilm, id);
+
+        String deleteFromMpa = "delete from mpa where film_id = ?";
+        jdbcTemplate.update(deleteFromMpa, id);
+
+        String deleteFromFilm = "delete from film where film_id = ?";
+        jdbcTemplate.update(deleteFromFilm, film.getId());
     }
 
     @Override

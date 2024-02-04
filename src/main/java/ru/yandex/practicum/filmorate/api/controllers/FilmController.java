@@ -58,8 +58,8 @@ public class FilmController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteFilm(@PathVariable Long id) {
-        filmService.deleteFilm(id);
+    public void deleteFilm(@PathVariable(value = "id") Long id) {
+        filmService.delete(id);
     }
 
     @GetMapping("/popular")
