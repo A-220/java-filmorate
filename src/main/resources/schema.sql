@@ -27,10 +27,10 @@ CREATE TABLE IF NOT EXISTS film
 
 CREATE TABLE IF NOT EXISTS film_genre
 (
-    film_id  INTEGER,
-    genre_id INTEGER,
-    foreign key (genre_id) references genre (genre_id),
-    foreign key (film_id) references film (film_id)
+      film_id  INTEGER,
+      genre_id INTEGER,
+      foreign key (genre_id) references genre (genre_id) ON DELETE CASCADE,
+      foreign key (film_id) references film (film_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS mpa
@@ -93,5 +93,4 @@ VALUES ('Комедия'),
        ('Мультфильм'),
        ('Триллер'),
        ('Документальный'),
-
        ('Боевик');

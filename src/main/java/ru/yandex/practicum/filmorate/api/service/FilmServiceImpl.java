@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.api.service;
 
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -28,7 +26,6 @@ public class FilmServiceImpl implements FilmService {
     public static final String SUCCESSFUL_ADD_FILM = "Successful add film with id: {}";
     public static final String SUCCESSFUL_UPDATE_FILM = "Successful update film with id: {}";
     public static final String EMPTY_LIST_WARN = "The list of films is empty";
-
 
     public List<Mpa> getMpa() {
         return filmRepository.mpa();
@@ -49,8 +46,8 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public void deleteFilm(Long id) {
-        filmRepository.delete(id);
+    public void delete(Long id) {
+        filmRepository.deleteFilm(id);
     }
 
     @Override
@@ -81,7 +78,6 @@ public class FilmServiceImpl implements FilmService {
         return listOfFilms;
     }
 
-
     @Override
     public Film setLike(Long id, Long userId) {
         var film = filmRepository.getFilmById(id).orElseThrow(() ->
@@ -106,8 +102,13 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public List<Film> getTopFilms(Integer count) {
-        return filmRepository.getTopFilms(count);
+    public List<Film> getMostPopularFilms(Integer count, Long genreId, Integer year) {
+        return filmRepository.getMostPopularFilms(count, genreId, year);
+    }
+
+    @Override
+    public List<Film> getCommonFilms(Long userId, Long friendId) {
+        return filmRepository.getCommonFilms(userId, friendId);
     }
 
 
