@@ -118,7 +118,7 @@ public class FilmServiceImpl implements FilmService {
         List<Film> films = new ArrayList<>();
         List<Long> filmIds = new ArrayList<>();
         if (userLikes.isEmpty() || userLikes.size() == 1) {
-            return List.of();
+            return Collections.emptyList();
         } else if (userLikes.containsKey(id)) {
             List<Long> likedFilmsByUserId = userLikes.get(id);
             userLikes.remove(id);
@@ -144,7 +144,7 @@ public class FilmServiceImpl implements FilmService {
                     }
                 }
                 if (filmIds.isEmpty()) {
-                    return List.of();
+                    return Collections.emptyList();
                 } else if (filmIds.size() == 1) {
                     filmRepository.getFilmById(filmIds.get(0)).ifPresent(films::add);
                 } else {
@@ -152,7 +152,7 @@ public class FilmServiceImpl implements FilmService {
                 }
             }
         } else {
-            return List.of();
+            return Collections.emptyList();
         }
         return films.stream().filter(film -> filmIds.contains(film.getId())).collect(Collectors.toList());
     }
