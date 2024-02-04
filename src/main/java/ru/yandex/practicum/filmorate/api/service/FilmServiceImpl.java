@@ -104,4 +104,9 @@ public class FilmServiceImpl implements FilmService {
     public List<Film> getTopFilms(Integer count) {
         return filmRepository.getTopFilms(count);
     }
+
+    @Override
+    public List<Film> getCommonFilms(Long userId, Long friendId) {
+        return filmRepository.getCommonFilms(userId, friendId);
+    }
 }
