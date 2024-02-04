@@ -30,7 +30,7 @@ public interface FilmStorage {
     void deleteFilm(Long id);
 
     Map<Long, List<Long>> getAllLikes();
-  
+
     List<Film> getMostPopularFilms(Integer count, Long genreId, Integer year);
 
     List<Film> getCommonFilms(Long userId, Long friendId);
