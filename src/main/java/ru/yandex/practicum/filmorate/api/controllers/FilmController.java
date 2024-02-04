@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.api.errors.ErrorsHandler;
-import ru.yandex.practicum.filmorate.storage.entity.Film;
 import ru.yandex.practicum.filmorate.api.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.entity.Film;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -27,7 +27,6 @@ public class FilmController {
     public Film getFilmById(@PathVariable(value = "id") Long id) {
         return filmService.getFilmById(id);
     }
-
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film, BindingResult bindingResult) {
@@ -53,11 +52,6 @@ public class FilmController {
         return filmService.removeLike(id, userId);
     }
 
-    @GetMapping("/popular")
-    public List<Film> getTopFilms(@RequestParam(defaultValue = "10") Integer count) {
-        return filmService.getTopFilms(count);
-    }
-
     @GetMapping
     public List<Film> getAllFilms() {
         return filmService.getAllFilms();
@@ -66,6 +60,14 @@ public class FilmController {
     @DeleteMapping("/{id}")
     public void deleteFilm(@PathVariable Long id) {
         filmService.deleteFilm(id);
+    }
+
+    @GetMapping("/popular")
+    public List<Film> getMostPopularFilms(
+            @RequestParam(required = false, defaultValue = "10") Integer count,
+            @RequestParam(required = false, name = "genreId") Long genreId,
+            @RequestParam(required = false, name = "year") Integer year) {
+        return filmService.getMostPopularFilms(count, genreId, year);
     }
 
     @GetMapping("/common")

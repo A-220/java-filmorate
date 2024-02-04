@@ -18,8 +18,6 @@ public interface FilmStorage {
 
     List<Film> getSortedByDirector(Long idDirector, String string);
 
-    List<Film> getTopFilms(Integer count);
-
     List<Mpa> mpa();
 
     Mpa mpaById(Long id);
@@ -29,6 +27,8 @@ public interface FilmStorage {
     Genre genreById(Long id);
 
     void delete(Long id);
+
+    List<Film> getMostPopularFilms(Integer count, Long genreId, Integer year);
 
     List<Film> getCommonFilms(Long userId, Long friendId);
 }
