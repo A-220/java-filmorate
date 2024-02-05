@@ -5,6 +5,7 @@ import ru.yandex.practicum.filmorate.storage.entity.Genre;
 import ru.yandex.practicum.filmorate.storage.entity.Mpa;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface FilmStorage {
@@ -26,9 +27,11 @@ public interface FilmStorage {
 
     Genre genreById(Long id);
 
+    void deleteFilm(Long id);
+
+    Map<Long, List<Long>> getAllLikes();
+
     List<Film> getMostPopularFilms(Integer count, Long genreId, Integer year);
 
     List<Film> getCommonFilms(Long userId, Long friendId);
-
-    void deleteFilm(Long id);
 }
