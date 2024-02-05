@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
-import java.util.Set;
 
 @Data
 @NotNull
@@ -15,17 +14,15 @@ import java.util.Set;
 @AllArgsConstructor
 public class Review {
 
-   private Long id ;
+    private Long id;
 
-   private String content;
+    private String content;
 
-   private Boolean isPositive;
+    private Boolean isPositive;
 
-   private Long userId;
+    private Long userId;
 
-   private Long filmId;
+    private Long filmId;
 
-   private Set<Long> likes;
-
-   private Set<Long> dislikes;
+    private Long useful;
 }
