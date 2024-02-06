@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserStorage {
-    void delete(Long id);
+    void deleteUser(Long id);
 
     Optional<User> getUserById(Long id);
 

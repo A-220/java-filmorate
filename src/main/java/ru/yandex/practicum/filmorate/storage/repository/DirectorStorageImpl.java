@@ -6,7 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.api.errors.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.storage.entity.Director;
 
@@ -15,7 +15,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Repository
 @AllArgsConstructor
 public class DirectorStorageImpl implements DirectorStorage {
 
