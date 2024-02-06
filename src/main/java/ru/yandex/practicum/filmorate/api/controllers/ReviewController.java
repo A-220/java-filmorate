@@ -1,11 +1,13 @@
 package ru.yandex.practicum.filmorate.api.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.api.errors.ErrorsHandler;
 import ru.yandex.practicum.filmorate.api.service.ReviewService;
 import ru.yandex.practicum.filmorate.storage.entity.Review;
 
+import javax.validation.Valid;
 import java.util.List;
 
 
@@ -14,19 +16,26 @@ import java.util.List;
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final ErrorsHandler errorsHandler;
 
     @Autowired
-    public ReviewController(ReviewService reviewService) {
+    public ReviewController(ReviewService reviewService,
+                            ErrorsHandler errorsHandler) {
         this.reviewService = reviewService;
+        this.errorsHandler = errorsHandler;
     }
 
     @PostMapping
-    public Review addReview(@RequestBody Review review) {
+    public Review addReview(@Valid @RequestBody Review review,
+                            BindingResult bindingResult) {
+        errorsHandler.throwValidationExceptionIfErrorsExist(bindingResult);
         return reviewService.addReview(review);
     }
 
     @PutMapping
-    public Review editReview(@RequestBody Review review) {
+    public Review editReview(@Valid @RequestBody Review review,
+                             BindingResult bindingResult) {
+        errorsHandler.throwValidationExceptionIfErrorsExist(bindingResult);
         return reviewService.editReview(review);
     }
 
@@ -41,7 +50,7 @@ public class ReviewController {
     }
 
     @GetMapping
-    public List<Review> getAllReviews(@RequestParam Long filmId,
+    public List<Review> getAllReviews(@RequestParam(required = false) Long filmId,
                                       @RequestParam(defaultValue = "10") Long count) {
         return reviewService.getAllReviews(filmId, count);
     }

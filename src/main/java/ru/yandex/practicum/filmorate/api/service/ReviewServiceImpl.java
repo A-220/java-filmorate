@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.storage.repository.ReviewStorage;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
@@ -42,10 +43,13 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public List<Review> getAllReviews(Long filmId, Long count) {
-        return reviewStorage.getAllReviews(filmId, count).stream()
-                .sorted(Comparator.comparingLong(Review::getUseful)
-                        .reversed())
-                .collect(Collectors.toList());
+        Stream<Review> sortedReview = reviewStorage.getAllReviews(count).stream()
+                .sorted(Comparator.comparingLong(Review::getUseful).reversed());
+        if (filmId != null) {
+            sortedReview = sortedReview
+                    .filter(review -> review.getFilmId().equals(filmId));
+        }
+        return sortedReview.collect(Collectors.toList());
     }
 
     @Override
@@ -76,13 +80,13 @@ public class ReviewServiceImpl implements ReviewService {
     private Review updateReview(Long id) {
         var review = reviewStorage.findById(id);
 
+        System.out.println(review);
+        System.out.println(reviewStorage.getAllRates(id));
         long usefulnessScore = reviewStorage.getAllRates(id).stream()
                 .mapToInt(rate -> rate.equals(LIKE) ? 1 : -1)
                 .sum();
 
-        review.setUseful(usefulnessScore);
-
-        return reviewStorage.update(review);
+        return reviewStorage.updateUseful(id, usefulnessScore);
     }
 
 

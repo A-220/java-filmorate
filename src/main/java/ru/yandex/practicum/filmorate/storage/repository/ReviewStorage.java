@@ -7,11 +7,13 @@ import java.util.List;
 public interface ReviewStorage {
     Review findById(Long id);
 
-    List<Review> getAllReviews(Long filmId, Long count);
+    List<Review> getAllReviews(Long count);
 
     Review create(Review review);
 
     Review update(Review review);
+
+    Review updateUseful(Long reviewId, Long useful);
 
     void delete(Long id);
 

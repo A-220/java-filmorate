@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS likes, friends, users, mpa, film_genre,
-    motion_picture_association, film, genre, film_directors, directors;
+    motion_picture_association, film, genre, film_directors,
+    directors, review,review_useful;
 
 CREATE TABLE IF NOT EXISTS motion_picture_association
 (
@@ -89,15 +90,16 @@ CREATE TABLE IF NOT EXISTS review
     film_id     INTEGER,
     useful      INTEGER DEFAULT 0,
     FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE,
-    FOREIGN KEY (film_id) REFERENCES film (film_id) ON DELETE CASCADE,
+    FOREIGN KEY (film_id) REFERENCES film (film_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS review_useful
 (
     review_id INTEGER,
-    user_id INTEGER,
-    point     VARCHAR(50),
-    FOREIGN KEY (review_id) REFERENCES review (review_id) ON DELETE CASCADE
+    user_id   INTEGER,
+    rate      VARCHAR(50),
+    FOREIGN KEY (review_id) REFERENCES review (review_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 
 INSERT INTO motion_picture_association (mpa_title)

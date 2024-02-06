@@ -16,14 +16,16 @@ import java.util.List;
 public class ReviewStorageImpl implements ReviewStorage {
 
     private final JdbcTemplate jdbcTemplate;
+    private final UserStorage userStorage;
+    private final FilmStorage filmStorage;
 
     public static final String NOT_FOUND = "Review with %d doesn't exist";
-    public static final String LIKE_ALREADY_EXIST = "Like already exist";
-    public static final String DISLIKE_ALREADY_EXIST = "Dislike already exist";
 
     @Autowired
-    public ReviewStorageImpl(JdbcTemplate jdbcTemplate) {
+    public ReviewStorageImpl(JdbcTemplate jdbcTemplate, UserStorage userStorage, FilmStorage filmStorage) {
         this.jdbcTemplate = jdbcTemplate;
+        this.userStorage = userStorage;
+        this.filmStorage = filmStorage;
     }
 
     @Override
@@ -33,7 +35,7 @@ public class ReviewStorageImpl implements ReviewStorage {
 
         if (rs.next()) {
             return Review.builder()
-                    .id(rs.getLong("review_id"))
+                    .reviewId(rs.getLong("review_id"))
                     .content(rs.getString("content"))
                     .isPositive(rs.getBoolean("is_positive"))
                     .userId(rs.getLong("user_id"))
@@ -46,17 +48,16 @@ public class ReviewStorageImpl implements ReviewStorage {
     }
 
     @Override
-    public List<Review> getAllReviews(Long filmId, Long count) {
+    public List<Review> getAllReviews(Long count) {
         var rs = jdbcTemplate.queryForRowSet(
                 "SELECT * FROM review " +
-                        "WHERE film_id = ? " +
-                        "LIMIT ?; ", filmId, count);
+                        "LIMIT ?; ", count);
 
         List<Review> reviews = new ArrayList<>();
 
         while (rs.next()) {
             var review = Review.builder()
-                    .id(rs.getLong("review_id"))
+                    .reviewId(rs.getLong("review_id"))
                     .content(rs.getString("content"))
                     .isPositive(rs.getBoolean("is_positive"))
                     .userId(rs.getLong("user_id"))
@@ -72,6 +73,9 @@ public class ReviewStorageImpl implements ReviewStorage {
     @Override
     @SneakyThrows
     public Review create(Review review) {
+        filmStorage.getFilmById(review.getFilmId());
+        userStorage.getUserById(review.getUserId());
+
         var keyHolder = new GeneratedKeyHolder();
 
         String sql = "INSERT INTO review(content, is_positive, user_id, film_id, useful)" +
@@ -89,29 +93,38 @@ public class ReviewStorageImpl implements ReviewStorage {
             return ps;
         }, keyHolder);
 
-        review.setId(keyHolder.getKey().longValue());
+        review.setReviewId(keyHolder.getKey().longValue());
 
         return review;
     }
 
     @Override
     public Review update(Review review) {
-        findById(review.getId());
+        filmStorage.getFilmById(review.getFilmId());
+        userStorage.getUserById(review.getUserId());
+
+        findById(review.getReviewId());
         String sql = "UPDATE review SET " +
-                "content = ? " +
-                "is_positive = ? " +
-                "user_id = ? " +
-                "film_id = ? " +
-                "useful = ? WHERE review_id = ?";
+                "content = ?, " +
+                "is_positive = ?  " +
+                "WHERE review_id = ?";
 
         jdbcTemplate.update(sql, review.getContent(),
                 review.getIsPositive(),
-                review.getUserId(),
-                review.getFilmId(),
-                review.getUseful(),
-                review.getId());
+                review.getReviewId());
 
-        return review;
+        return findById(review.getReviewId());
+    }
+
+    @Override
+    public Review updateUseful(Long reviewId, Long useful) {
+        String sql = "UPDATE review SET " +
+                "useful = ? " +
+                "WHERE review_id = ?";
+
+        jdbcTemplate.update(sql, useful, reviewId);
+
+        return findById(reviewId);
     }
 
     @Override
@@ -125,7 +138,7 @@ public class ReviewStorageImpl implements ReviewStorage {
 
         findById(id);
 
-        String sql = "INSERT INTO review(review_id, user_id, point)" +
+        String sql = "INSERT INTO review_useful(review_id, user_id, rate)" +
                 "VALUES(?, ?, ?) ";
 
         jdbcTemplate.update(connection -> {
@@ -145,7 +158,7 @@ public class ReviewStorageImpl implements ReviewStorage {
         String sql = "DELETE FROM review_useful " +
                 "WHERE review_id = ? " +
                 "AND user_id = ?" +
-                "AND point = ? ";
+                "AND rate = ? ";
 
         jdbcTemplate.update(sql, id, userId, type);
     }
@@ -158,7 +171,7 @@ public class ReviewStorageImpl implements ReviewStorage {
         List<String> rate = new ArrayList<>();
 
         while (rs.next()) {
-            rate.add(rs.getString("point"));
+            rate.add(rs.getString("rate"));
         }
 
         return rate;
