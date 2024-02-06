@@ -135,7 +135,6 @@ public class ReviewStorageImpl implements ReviewStorage {
 
     @Override
     public void addRate(Long id, Long userId, String type) {
-
         findById(id);
 
         String sql = "INSERT INTO review_useful(review_id, user_id, rate)" +
