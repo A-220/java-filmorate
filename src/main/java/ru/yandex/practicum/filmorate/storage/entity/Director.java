@@ -12,7 +12,9 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Director {
+
     private Long id;
+
     @NotEmpty(message = "Name cannot be empty")
     private String name;
 }
