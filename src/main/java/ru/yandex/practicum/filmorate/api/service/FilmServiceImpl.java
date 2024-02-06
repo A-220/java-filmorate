@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.api.errors.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.storage.entity.Event;
 import ru.yandex.practicum.filmorate.storage.entity.Film;
 import ru.yandex.practicum.filmorate.storage.entity.Genre;
 import ru.yandex.practicum.filmorate.storage.entity.Mpa;
+import ru.yandex.practicum.filmorate.storage.repository.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.repository.FilmStorage;
 
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 public class FilmServiceImpl implements FilmService {
 
     private final FilmStorage filmRepository;
+    private final FeedStorage feedRepository;
     public static final String FILM_NOT_FOUND_WARN = "Film with id: %s doesn't exist.";
     public static final String SUCCESSFUL_ADD_FILM = "Successful add film with id: {}";
     public static final String SUCCESSFUL_UPDATE_FILM = "Successful update film with id: {}";
@@ -84,6 +87,9 @@ public class FilmServiceImpl implements FilmService {
                 new NotFoundException(UserServiceImpl.NOT_FOUND_USER));
         film.setLikeToFilm(userId);
         updateFilm(film);
+
+        feedRepository.saveToFeed(new Event(System.currentTimeMillis(), userId, "LIKE", "ADD", id));
+
         return film;
     }
 
@@ -93,6 +99,9 @@ public class FilmServiceImpl implements FilmService {
                 new NotFoundException(UserServiceImpl.NOT_FOUND_USER));
         film.deleteLike(userId);
         updateFilm(film);
+
+        feedRepository.saveToFeed(new Event(System.currentTimeMillis(), userId, "LIKE", "REMOVE", id));
+
         return film;
     }
 
