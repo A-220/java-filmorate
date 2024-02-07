@@ -467,7 +467,10 @@ public class FilmStorageImpl implements FilmStorage {
             mostPopularFilms.add(film);
         }
 
-        return new ArrayList<>(mostPopularFilms).stream().sorted(Comparator.comparingLong(Film::getId)).collect(Collectors.toList());
+        return new ArrayList<>(mostPopularFilms)
+                .stream()
+                .sorted(Comparator.comparingLong(Film::getId))
+                .collect(Collectors.toList());
     }
 
     private List<Long> getPopularFilmsIds(Integer count, Long genreId, Integer year) {
@@ -475,8 +478,7 @@ public class FilmStorageImpl implements FilmStorage {
         Optional<Integer> presentYear = Optional.ofNullable(year);
 
         StringBuilder sqlQuery = new StringBuilder();
-        sqlQuery
-                .append("SELECT f.film_id, COUNT(l.user_id) AS count_likes FROM film AS f ")
+        sqlQuery.append("SELECT f.film_id, COUNT(l.user_id) AS count_likes FROM film AS f ")
                 .append("LEFT JOIN likes AS l ON l.film_id = f.film_id ");
         presentGenreId.map(g ->
                 sqlQuery
@@ -489,8 +491,7 @@ public class FilmStorageImpl implements FilmStorage {
                         .append(" EXTRACT(YEAR FROM f.release_date) = ")
                         .append(presentYear.get())
         );
-        sqlQuery
-                .append("GROUP BY f.film_id ORDER BY count_likes DESC LIMIT ")
+        sqlQuery.append("GROUP BY f.film_id ORDER BY count_likes DESC LIMIT ")
                 .append(count);
 
         return jdbcTemplate.query(sqlQuery.toString(), this::getId);
