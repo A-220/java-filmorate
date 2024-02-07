@@ -35,6 +35,7 @@ public class FilmStorageImpl implements FilmStorage {
     }
 
     private void checkFilmExist(Long id) {
+        //noinspection SqlNoDataSourceInspection
         if (!(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM film WHERE film_id = ?", Integer.class, id) > 0)) {
             throw new NotFoundException(FilmServiceImpl.FILM_NOT_FOUND_WARN);
         }
@@ -233,14 +234,9 @@ public class FilmStorageImpl implements FilmStorage {
                 "ORDER BY rating";
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet(sql, userId);
         while (filmRows.next()) {
-            var film = filmBuilder(filmRows);
-
-            userFilms.add(film);
-
+            userFilms.add(filmBuilder(filmRows));
         }
         setMpaGenreLikes(userFilms);
-        setDirectorForFilm(userFilms);
-
 
         filmRows = jdbcTemplate.queryForRowSet(sql, friendId);
         while (filmRows.next()) {
@@ -471,7 +467,7 @@ public class FilmStorageImpl implements FilmStorage {
             mostPopularFilms.add(film);
         }
 
-        return new ArrayList<>(mostPopularFilms);
+        return new ArrayList<>(mostPopularFilms).stream().sorted(Comparator.comparingLong(Film::getId)).collect(Collectors.toList());
     }
 
     private List<Long> getPopularFilmsIds(Integer count, Long genreId, Integer year) {
