@@ -8,6 +8,8 @@ import ru.yandex.practicum.filmorate.storage.entity.Event;
 import ru.yandex.practicum.filmorate.storage.entity.Film;
 import ru.yandex.practicum.filmorate.storage.entity.Genre;
 import ru.yandex.practicum.filmorate.storage.entity.Mpa;
+import ru.yandex.practicum.filmorate.storage.entity.enums.EventType;
+import ru.yandex.practicum.filmorate.storage.entity.enums.Operation;
 import ru.yandex.practicum.filmorate.storage.repository.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.repository.FilmStorage;
 
@@ -88,7 +90,8 @@ public class FilmServiceImpl implements FilmService {
         film.setLikeToFilm(userId);
         updateFilm(film);
 
-        feedRepository.saveToFeed(new Event(System.currentTimeMillis(), userId, "LIKE", "ADD", id));
+        feedRepository.saveToFeed(new Event(System.currentTimeMillis(), userId,
+                EventType.LIKE, Operation.ADD, id));
 
         return film;
     }
@@ -100,7 +103,8 @@ public class FilmServiceImpl implements FilmService {
         film.deleteLike(userId);
         updateFilm(film);
 
-        feedRepository.saveToFeed(new Event(System.currentTimeMillis(), userId, "LIKE", "REMOVE", id));
+        feedRepository.saveToFeed(new Event(System.currentTimeMillis(), userId,
+                EventType.LIKE, Operation.REMOVE, id));
 
         return film;
     }

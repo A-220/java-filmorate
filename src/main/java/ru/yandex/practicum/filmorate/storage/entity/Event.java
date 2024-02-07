@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.yandex.practicum.filmorate.storage.entity.enums.EventType;
+import ru.yandex.practicum.filmorate.storage.entity.enums.Operation;
 
 @Builder
 @Data
@@ -13,12 +15,12 @@ public class Event {
 
     Long timestamp;
     Long userId;
-    String eventType;
-    String operation;
+    EventType eventType;
+    Operation operation;
     Long eventId;
     Long entityId;
 
-    public Event(Long timestamp, Long userId, String eventType, String operation, Long entityId) {
+    public Event(Long timestamp, Long userId, EventType eventType, Operation operation, Long entityId) {
         this.timestamp = timestamp;
         this.userId = userId;
         this.eventType = eventType;

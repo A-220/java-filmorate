@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.api.errors.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.storage.entity.Event;
 import ru.yandex.practicum.filmorate.storage.entity.User;
+import ru.yandex.practicum.filmorate.storage.entity.enums.EventType;
+import ru.yandex.practicum.filmorate.storage.entity.enums.Operation;
 import ru.yandex.practicum.filmorate.storage.repository.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.repository.UserStorage;
 
@@ -73,7 +75,7 @@ public class UserServiceImpl implements UserService {
 
         updateUser(user);
 
-        feedRepository.saveToFeed(new Event(System.currentTimeMillis(), id, "FRIEND", "ADD", friendId));
+        feedRepository.saveToFeed(new Event(System.currentTimeMillis(), id, EventType.FRIEND, Operation.ADD, friendId));
 
         return user;
     }
@@ -92,7 +94,7 @@ public class UserServiceImpl implements UserService {
 
         log.info(SUCCESSFUL_DELETE_FRIEND, friendId, id);
 
-        feedRepository.saveToFeed(new Event(System.currentTimeMillis(), id, "FRIEND", "REMOVE", friendId));
+        feedRepository.saveToFeed(new Event(System.currentTimeMillis(), id, EventType.FRIEND, Operation.REMOVE, friendId));
 
         return user;
     }

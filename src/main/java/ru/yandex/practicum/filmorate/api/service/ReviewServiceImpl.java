@@ -3,6 +3,8 @@ package ru.yandex.practicum.filmorate.api.service;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.storage.entity.Event;
 import ru.yandex.practicum.filmorate.storage.entity.Review;
+import ru.yandex.practicum.filmorate.storage.entity.enums.EventType;
+import ru.yandex.practicum.filmorate.storage.entity.enums.Operation;
 import ru.yandex.practicum.filmorate.storage.repository.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.repository.ReviewStorage;
 
@@ -29,7 +31,7 @@ public class ReviewServiceImpl implements ReviewService {
     public Review addReview(Review review) {
         Review addReview = reviewStorage.create(review);
         feedRepository.saveToFeed(new Event(System.currentTimeMillis(), review.getUserId(),
-                "REVIEW", "ADD", review.getReviewId()));
+                EventType.REVIEW, Operation.ADD, review.getReviewId()));
         return addReview;
     }
 
@@ -37,7 +39,7 @@ public class ReviewServiceImpl implements ReviewService {
     public Review editReview(Review review) {
         Review editReview =  reviewStorage.update(review);
         feedRepository.saveToFeed(new Event(System.currentTimeMillis(), editReview.getUserId(),
-                "REVIEW", "UPDATE", editReview.getReviewId()));
+                EventType.REVIEW, Operation.UPDATE, editReview.getReviewId()));
         return editReview;
     }
 
@@ -46,7 +48,7 @@ public class ReviewServiceImpl implements ReviewService {
         Long userId = getReviewById(id).getUserId();
         reviewStorage.delete(id);
         feedRepository.saveToFeed(new Event(System.currentTimeMillis(), userId,
-                "REVIEW", "REMOVE", id));
+                EventType.REVIEW, Operation.REMOVE, id));
     }
 
     @Override
