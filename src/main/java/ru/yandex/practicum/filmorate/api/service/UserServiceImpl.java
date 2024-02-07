@@ -4,7 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.api.errors.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.storage.entity.Event;
 import ru.yandex.practicum.filmorate.storage.entity.User;
+import ru.yandex.practicum.filmorate.storage.entity.enums.EventType;
+import ru.yandex.practicum.filmorate.storage.entity.enums.Operation;
+import ru.yandex.practicum.filmorate.storage.repository.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.repository.UserStorage;
 
 import java.util.Comparator;
@@ -19,6 +23,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserStorage userRepository;
+    private final FeedStorage feedRepository;
     public static final String NOT_FOUND_USER = "User with id %s doesn't exist.";
     public static final String SUCCESSFUL_ADD_USER = "Successful add user with id: {}";
     public static final String SUCCESSFUL_UPDATE_USER = "Successful update user with id: {}";
@@ -69,6 +74,9 @@ public class UserServiceImpl implements UserService {
         user.setFriendStatus(friendId, "Запрос отправлен");
 
         updateUser(user);
+
+        feedRepository.saveToFeed(new Event(System.currentTimeMillis(), id, EventType.FRIEND, Operation.ADD, friendId));
+
         return user;
     }
 
@@ -85,6 +93,9 @@ public class UserServiceImpl implements UserService {
         updateUser(user);
 
         log.info(SUCCESSFUL_DELETE_FRIEND, friendId, id);
+
+        feedRepository.saveToFeed(new Event(System.currentTimeMillis(), id, EventType.FRIEND, Operation.REMOVE, friendId));
+
         return user;
     }
 
@@ -105,6 +116,12 @@ public class UserServiceImpl implements UserService {
                 .filter(j::contains)
                 .map(this::getUserById)
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public List<Event> getUserFeed(Long id) {
+        getUserById(id);
+        return feedRepository.getUserFeed(id);
     }
 
     private void ensureNameIsSet(User user) {

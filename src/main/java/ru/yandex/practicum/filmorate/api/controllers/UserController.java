@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.api.errors.ErrorsHandler;
 import ru.yandex.practicum.filmorate.api.service.FilmService;
 import ru.yandex.practicum.filmorate.api.service.UserService;
+import ru.yandex.practicum.filmorate.storage.entity.Event;
 import ru.yandex.practicum.filmorate.storage.entity.Film;
 import ru.yandex.practicum.filmorate.storage.entity.User;
 
@@ -82,5 +83,10 @@ public class UserController {
     @GetMapping("{id}/recommendations")
     public List<Film> getRecommendations(@PathVariable(value = "id") Long id) {
         return filmService.getRecommendations(id);
+    }
+
+    @GetMapping("{id}/feed")
+    public List<Event> getAllFeed(@PathVariable(value = "id") Long id) {
+        return userService.getUserFeed(id);
     }
 }

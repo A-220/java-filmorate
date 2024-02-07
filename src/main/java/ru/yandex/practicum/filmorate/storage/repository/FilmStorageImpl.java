@@ -21,9 +21,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.api.service.FilmServiceImpl.FILM_NOT_FOUND_WARN;
-
-import static ru.yandex.practicum.filmorate.api.service.UserServiceImpl.NOT_FOUND_USER;
-
 import static ru.yandex.practicum.filmorate.api.service.UserServiceImpl.NOT_FOUND_USER;
 
 @Component("FilmStorageJdbc")

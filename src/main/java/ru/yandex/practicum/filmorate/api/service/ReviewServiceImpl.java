@@ -1,7 +1,11 @@
 package ru.yandex.practicum.filmorate.api.service;
 
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.storage.entity.Event;
 import ru.yandex.practicum.filmorate.storage.entity.Review;
+import ru.yandex.practicum.filmorate.storage.entity.enums.EventType;
+import ru.yandex.practicum.filmorate.storage.entity.enums.Operation;
+import ru.yandex.practicum.filmorate.storage.repository.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.repository.ReviewStorage;
 
 import java.util.Comparator;
@@ -13,27 +17,38 @@ import java.util.stream.Stream;
 public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewStorage reviewStorage;
+    private final FeedStorage feedRepository;
 
     public static final String LIKE = "LIKE";
     public static final String DISLIKE = "DISLIKE";
 
-    public ReviewServiceImpl(ReviewStorage reviewStorage) {
+    public ReviewServiceImpl(ReviewStorage reviewStorage, FeedStorage feedRepository) {
         this.reviewStorage = reviewStorage;
+        this.feedRepository = feedRepository;
     }
 
     @Override
     public Review addReview(Review review) {
-        return reviewStorage.create(review);
+        Review addReview = reviewStorage.create(review);
+        feedRepository.saveToFeed(new Event(System.currentTimeMillis(), review.getUserId(),
+                EventType.REVIEW, Operation.ADD, review.getReviewId()));
+        return addReview;
     }
 
     @Override
     public Review editReview(Review review) {
-        return reviewStorage.update(review);
+        Review editReview =  reviewStorage.update(review);
+        feedRepository.saveToFeed(new Event(System.currentTimeMillis(), editReview.getUserId(),
+                EventType.REVIEW, Operation.UPDATE, editReview.getReviewId()));
+        return editReview;
     }
 
     @Override
     public void deleteReviewById(Long id) {
+        Long userId = getReviewById(id).getUserId();
         reviewStorage.delete(id);
+        feedRepository.saveToFeed(new Event(System.currentTimeMillis(), userId,
+                EventType.REVIEW, Operation.REMOVE, id));
     }
 
     @Override
