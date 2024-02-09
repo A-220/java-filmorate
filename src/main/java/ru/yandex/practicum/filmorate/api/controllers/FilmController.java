@@ -2,15 +2,19 @@ package ru.yandex.practicum.filmorate.api.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.api.errors.ErrorsHandler;
 import ru.yandex.practicum.filmorate.api.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.entity.Film;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping("/films")
 public class FilmController {
 
@@ -64,9 +68,9 @@ public class FilmController {
 
     @GetMapping("/popular")
     public List<Film> getMostPopularFilms(
-            @RequestParam(required = false, defaultValue = "10") Integer count,
+            @RequestParam(defaultValue = "10") @Positive Integer count,
             @RequestParam(required = false, name = "genreId") Long genreId,
-            @RequestParam(required = false, name = "year") Integer year) {
+            @RequestParam(required = false, name = "year") @Min(1895) Integer year) {
         return filmService.getMostPopularFilms(count, genreId, year);
     }
 
