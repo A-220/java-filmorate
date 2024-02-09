@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
         User user = getUserById(id);
         getUserById(friendId);
 
-        user.setFriendStatus(friendId, "Запрос отправлен");
+        user.setFriendStatus(friendId, "Request send");
 
         updateUser(user);
 

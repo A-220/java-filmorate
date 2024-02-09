@@ -27,6 +27,7 @@ public class FilmServiceImpl implements FilmService {
 
     private final FilmStorage filmRepository;
     private final FeedStorage feedRepository;
+
     public static final String FILM_NOT_FOUND_WARN = "Film with id: %s doesn't exist.";
     public static final String SUCCESSFUL_ADD_FILM = "Successful add film with id: {}";
     public static final String SUCCESSFUL_UPDATE_FILM = "Successful update film with id: {}";
@@ -167,7 +168,9 @@ public class FilmServiceImpl implements FilmService {
         } else {
             return Collections.emptyList();
         }
-        return films.stream().filter(film -> filmIds.contains(film.getId())).collect(Collectors.toList());
+        return films.stream()
+                .filter(film -> filmIds.contains(film.getId()))
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -1,12 +1,11 @@
 package ru.yandex.practicum.filmorate.storage.repository;
 
 import lombok.SneakyThrows;
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.api.errors.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.storage.entity.User;
 
@@ -17,8 +16,8 @@ import java.util.*;
 
 import static ru.yandex.practicum.filmorate.api.service.UserServiceImpl.NOT_FOUND_USER;
 
-@Component("UserStorageJdbc")
-@Primary
+
+@Repository
 public class UserStorageImpl implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
 
@@ -51,13 +50,21 @@ public class UserStorageImpl implements UserStorage {
             String deleteFriends = "delete from friends where user_id = ?";
             jdbcTemplate.update(deleteFriends, user.getId());
         }
-        if (user.getFriendStatus() != null) {
+
+        if (user.getFriendStatus() != null && !user.getFriendStatus().isEmpty()) {
             String addFriends = "insert into friends(user_id, users_id, status) values (?, ?, ?)";
+            List<Object[]> batchArgs = new ArrayList<>();
+
             for (Map.Entry<Long, String> entry : user.getFriendStatus().entrySet()) {
-                jdbcTemplate.update(addFriends, user.getId(), entry.getKey(), entry.getValue());
+                batchArgs.add(new Object[]{user.getId(), entry.getKey(), entry.getValue()});
+            }
+
+            if (!batchArgs.isEmpty()) {
+                jdbcTemplate.batchUpdate(addFriends, batchArgs);
             }
         }
     }
+
 
     @Override
     public User addUser(User user) {

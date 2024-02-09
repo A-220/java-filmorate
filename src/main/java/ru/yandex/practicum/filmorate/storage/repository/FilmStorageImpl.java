@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.api.comparator.LikesComparator;
 import ru.yandex.practicum.filmorate.api.errors.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.api.service.FilmServiceImpl;
@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 import static ru.yandex.practicum.filmorate.api.service.FilmServiceImpl.FILM_NOT_FOUND_WARN;
 import static ru.yandex.practicum.filmorate.api.service.UserServiceImpl.NOT_FOUND_USER;
 
-@Component("FilmStorageJdbc")
 @Primary
+@Repository
 public class FilmStorageImpl implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
 

@@ -16,16 +16,12 @@ import java.util.List;
 public class ReviewStorageImpl implements ReviewStorage {
 
     private final JdbcTemplate jdbcTemplate;
-    private final UserStorage userStorage;
-    private final FilmStorage filmStorage;
 
     public static final String NOT_FOUND = "Review with %d doesn't exist";
 
     @Autowired
-    public ReviewStorageImpl(JdbcTemplate jdbcTemplate, UserStorage userStorage, FilmStorage filmStorage) {
+    public ReviewStorageImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.userStorage = userStorage;
-        this.filmStorage = filmStorage;
     }
 
     @Override
@@ -73,9 +69,6 @@ public class ReviewStorageImpl implements ReviewStorage {
     @Override
     @SneakyThrows
     public Review create(Review review) {
-        filmStorage.getFilmById(review.getFilmId());
-        userStorage.getUserById(review.getUserId());
-
         var keyHolder = new GeneratedKeyHolder();
 
         String sql = "INSERT INTO review(content, is_positive, user_id, film_id, useful)" +
@@ -100,9 +93,6 @@ public class ReviewStorageImpl implements ReviewStorage {
 
     @Override
     public Review update(Review review) {
-        filmStorage.getFilmById(review.getFilmId());
-        userStorage.getUserById(review.getUserId());
-
         findById(review.getReviewId());
         String sql = "UPDATE review SET " +
                 "content = ?, " +
