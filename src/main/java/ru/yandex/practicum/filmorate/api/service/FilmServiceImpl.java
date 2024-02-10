@@ -1,9 +1,11 @@
 package ru.yandex.practicum.filmorate.api.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.api.errors.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.storage.StringForSortFilmByDirector;
 import ru.yandex.practicum.filmorate.storage.entity.Film;
 import ru.yandex.practicum.filmorate.storage.entity.Genre;
 import ru.yandex.practicum.filmorate.storage.entity.Mpa;
@@ -96,9 +98,14 @@ public class FilmServiceImpl implements FilmService {
         return film;
     }
 
+    @SneakyThrows
     @Override
     public List<Film> getSortedByDirector(Long idDirector, String string) {
-        return filmRepository.getSortedByDirector(idDirector, string);
+        if (string.equals(StringForSortFilmByDirector.year.toString()) ||
+                string.equals(StringForSortFilmByDirector.likes.toString())) {
+            return filmRepository.getSortedByDirector(idDirector, string);
+        }
+        throw new IllegalAccessException();
     }
 
     @Override

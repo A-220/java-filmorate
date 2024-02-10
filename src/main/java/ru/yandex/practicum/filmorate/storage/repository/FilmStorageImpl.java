@@ -203,7 +203,6 @@ public class FilmStorageImpl implements FilmStorage {
     public List<Film> getSortedByDirector(Long idDirector, String string) {
         List<Film> films = new ArrayList<>();
 
-        //TODO не нравитя два вложенных цикла
         for (Film film : getAllFilms()) {
             for (Director director : film.getDirectors()) {
                 if (director.getId().equals(idDirector)) {
