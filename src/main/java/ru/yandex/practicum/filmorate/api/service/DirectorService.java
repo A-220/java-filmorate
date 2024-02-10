@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.api.service;
 
-import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.storage.entity.Director;
 
 import java.util.List;

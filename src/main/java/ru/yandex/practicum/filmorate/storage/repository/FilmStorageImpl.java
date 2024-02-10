@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.api.comparator.LikesComparator;
 import ru.yandex.practicum.filmorate.api.errors.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.api.service.FilmServiceImpl;
@@ -21,13 +21,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.api.service.FilmServiceImpl.FILM_NOT_FOUND_WARN;
-
 import static ru.yandex.practicum.filmorate.api.service.UserServiceImpl.NOT_FOUND_USER;
 
-import static ru.yandex.practicum.filmorate.api.service.UserServiceImpl.NOT_FOUND_USER;
-
-@Component("FilmStorageJdbc")
 @Primary
+@Repository
 public class FilmStorageImpl implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
 
@@ -38,6 +35,7 @@ public class FilmStorageImpl implements FilmStorage {
     }
 
     private void checkFilmExist(Long id) {
+        //noinspection SqlNoDataSourceInspection
         if (!(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM film WHERE film_id = ?", Integer.class, id) > 0)) {
             throw new NotFoundException(FilmServiceImpl.FILM_NOT_FOUND_WARN);
         }
@@ -235,14 +233,9 @@ public class FilmStorageImpl implements FilmStorage {
                 "ORDER BY rating";
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet(sql, userId);
         while (filmRows.next()) {
-            var film = filmBuilder(filmRows);
-
-            userFilms.add(film);
-
+            userFilms.add(filmBuilder(filmRows));
         }
         setMpaGenreLikes(userFilms);
-        setDirectorForFilm(userFilms);
-
 
         filmRows = jdbcTemplate.queryForRowSet(sql, friendId);
         while (filmRows.next()) {
@@ -473,7 +466,10 @@ public class FilmStorageImpl implements FilmStorage {
             mostPopularFilms.add(film);
         }
 
-        return new ArrayList<>(mostPopularFilms);
+        return new ArrayList<>(mostPopularFilms)
+                .stream()
+                .sorted(Comparator.comparingLong(Film::getId))
+                .collect(Collectors.toList());
     }
 
     private List<Long> getPopularFilmsIds(Integer count, Long genreId, Integer year) {
@@ -481,8 +477,7 @@ public class FilmStorageImpl implements FilmStorage {
         Optional<Integer> presentYear = Optional.ofNullable(year);
 
         StringBuilder sqlQuery = new StringBuilder();
-        sqlQuery
-                .append("SELECT f.film_id, COUNT(l.user_id) AS count_likes FROM film AS f ")
+        sqlQuery.append("SELECT f.film_id, COUNT(l.user_id) AS count_likes FROM film AS f ")
                 .append("LEFT JOIN likes AS l ON l.film_id = f.film_id ");
         presentGenreId.map(g ->
                 sqlQuery
@@ -495,8 +490,7 @@ public class FilmStorageImpl implements FilmStorage {
                         .append(" EXTRACT(YEAR FROM f.release_date) = ")
                         .append(presentYear.get())
         );
-        sqlQuery
-                .append("GROUP BY f.film_id ORDER BY count_likes DESC LIMIT ")
+        sqlQuery.append("GROUP BY f.film_id ORDER BY count_likes DESC LIMIT ")
                 .append(count);
 
         return jdbcTemplate.query(sqlQuery.toString(), this::getId);
