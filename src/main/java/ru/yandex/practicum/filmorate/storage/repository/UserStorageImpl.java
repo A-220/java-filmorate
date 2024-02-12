@@ -1,14 +1,12 @@
 package ru.yandex.practicum.filmorate.storage.repository;
 
 import lombok.SneakyThrows;
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.api.errors.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.api.service.UserServiceImpl;
 import ru.yandex.practicum.filmorate.storage.entity.User;
 
 import java.sql.PreparedStatement;
@@ -16,8 +14,10 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.*;
 
-@Component("UserStorageJdbc")
-@Primary
+import static ru.yandex.practicum.filmorate.api.service.UserServiceImpl.NOT_FOUND_USER;
+
+
+@Repository
 public class UserStorageImpl implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
 
@@ -27,7 +27,7 @@ public class UserStorageImpl implements UserStorage {
 
     private void checkUserExist(Long id) {
         if (!(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM users WHERE user_id = ?", Long.class, id) > 0)) {
-            throw new NotFoundException(UserServiceImpl.NOT_FOUND_USER);
+            throw new NotFoundException(NOT_FOUND_USER);
         }
     }
 
@@ -50,10 +50,17 @@ public class UserStorageImpl implements UserStorage {
             String deleteFriends = "delete from friends where user_id = ?";
             jdbcTemplate.update(deleteFriends, user.getId());
         }
-        if (user.getFriendStatus() != null) {
+
+        if (user.getFriendStatus() != null && !user.getFriendStatus().isEmpty()) {
             String addFriends = "insert into friends(user_id, users_id, status) values (?, ?, ?)";
+            List<Object[]> batchArgs = new ArrayList<>();
+
             for (Map.Entry<Long, String> entry : user.getFriendStatus().entrySet()) {
-                jdbcTemplate.update(addFriends, user.getId(), entry.getKey(), entry.getValue());
+                batchArgs.add(new Object[]{user.getId(), entry.getKey(), entry.getValue()});
+            }
+
+            if (!batchArgs.isEmpty()) {
+                jdbcTemplate.batchUpdate(addFriends, batchArgs);
             }
         }
     }
@@ -82,12 +89,17 @@ public class UserStorageImpl implements UserStorage {
     }
 
     @Override
-    public void delete(Long id) {
-        String deleteFromUsers = "delete from users where user_id = ?";
-        jdbcTemplate.update(deleteFromUsers, id);
+    public void deleteUser(Long id) {
+        User user = getUserById(id).orElseThrow(() -> new NotFoundException(String.format(NOT_FOUND_USER, id)));
+
+        String deleteFriends = "delete from friends where users_id = ?";
+        jdbcTemplate.update(deleteFriends, user.getId());
 
         String deleteFromLikes = "delete from likes where user_id = ?";
         jdbcTemplate.update(deleteFromLikes, id);
+
+        String deleteFromUsers = "delete from users where user_id = ?";
+        jdbcTemplate.update(deleteFromUsers, id);
     }
 
     @SneakyThrows
@@ -144,10 +156,8 @@ public class UserStorageImpl implements UserStorage {
                         .forEach(userFriendMap -> userFriendMap.forEach(user::setFriendStatus));
             });
         }
-
         return users;
     }
-
 
     private Map<Long, List<Map<Long, String>>> makeFriend() {
         SqlRowSet rs = jdbcTemplate.queryForRowSet("SELECT * FROM friends");
@@ -169,8 +179,6 @@ public class UserStorageImpl implements UserStorage {
                 userFriends.put(userId, listOfFriends);
             }
         }
-
         return userFriends;
     }
-
 }

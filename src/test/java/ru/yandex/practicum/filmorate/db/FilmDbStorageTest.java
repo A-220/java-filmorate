@@ -32,6 +32,7 @@ class FilmDbStorageTest {
                 .mpa(mpa)
                 .likes(new HashSet<>())
                 .genres(new HashSet<>())
+                .directors(new HashSet<>())
                 .build();
 
         var filmStorage = new FilmStorageImpl(jdbcTemplate);
